@@ -1,0 +1,821 @@
+Java 8 New Features.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Lambda Expressions
+Functional Interfaces
+	- Predicate
+	- Supplier	
+	- Consumer
+	- Function
+
+Interfaces changes (default & static methods)
+Stream API
+Method References
+Constructor References
+Date & Time API changes
+Optional class
+SplitIterator
+StringJoiner
+Collection Framework changes
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Lambda Expressions
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> LISP is the first Programming Language which supported for Lambda Expression.
+
+LISP
+C
+C++
+C#
+Scala
+Ruby
+Python etc...
+
+-> Java started support for Lambda Expression from 1.8 version (Java is late in Lambdas)
+-> Java is an Object Oriented Programming Language. Introducing Lambdas in Java it is supporting Functional Programming also.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Object Oriented Programming Vs Functional Programming?
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-> In Object Oriented Programming Languages Classes & Objects are main entities.
+-> If we want to create a Function in OOP's Languages, that Function should be created inside the class.
+
+-> In Functional Programming, Function can exist outside the scope of an object
+-> We can assign Function to a Reference Variable.
+-> One Function can be passed as a Parameter to another Function.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+What is Lambda?
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> A Lambda Expression is just an Anonymous Function
+	- No Name.
+	- No Modifier.
+	- No Return Type.
+	- And we use "->" this symbol to represent Lambda.
+-> Lambda Expressions are used to implement Functional Programming in Java.
+-> By using Lambda Expressions we can write more Readable and Concise code.
+
+
+Normal Method:
+
+	public void m1() {
+		System.out.println("Hi");
+	}
+
+Equivalent Lambda:
+
+	() -> System.out.println("Hi");
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Why to use Lambda Expressions?
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> To write Functional Programming in Java.
+-> To write more Readable, Maintainable and Concise code.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+How to write Lambda Expressions in Java?
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Writing Lambdas is very easy if you know how to write methods in Java.
+-> Let us take one example to understand how to write Lambda.
+
+Example 1:
+----------
+
+Normal Method:
+
+	public void greet() {
+		System.out.println("Hi");
+	}
+
+Equivalent Lambda:
+
+	() -> System.out.println("Hi");
+
+
+Example 2:
+----------
+
+Normal Method:
+
+	public void add(int a, int b) {
+		System.out.println(a+b);
+	}
+
+Equivalent Lambda:
+
+	(a, b) -> System.out.println(a+b);
+
+
+Example 3:
+----------
+
+Normal Method:
+
+	public User getUserById(Integer userId) {
+		User user = dao.findById(userId);
+		return user;
+	}
+
+Equivalent Lambda:
+
+	(userId) -> {
+		User user = dao.findById(userId);
+		return user;
+	};
+
+Example 4:
+----------
+
+Normal Method:
+
+public class EmailUtils {
+
+	public Boolean sendMail(String sub, String body, String to){
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setSubject(sub);
+		msg.setBody(body);
+		msg.setTo(to);
+
+		JavaMailSender sender = new JavaMailSender();
+		sender.send(msg);
+		return true;
+	}
+
+}
+
+Equivalent Lambda:
+
+	(sub, body, to) -> {
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setSubject(sub);
+		msg.setBody(body);
+		msg.setTo(to);
+
+		JavaMailSender sender = new JavaMailSender();
+		sender.send(msg);
+		return true;
+	}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+How to call Lambdas?
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Normal Method:
+	class Demo {
+		public void m1() {
+			System.out.println("Hi");
+		}
+	}
+
+	Demo demo = new Demo();
+	demo.m1();
+
+Lambda Way:
+	
+	class Test {
+		() -> System.out.println("Hi");
+	}	
+
+-> To call the Normal method of a class we can use the object of that class but to call the Lambda there is no such way of object so for that the concept of Functional Interface is there.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Functional Interface:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> The interface which contains only one abstract method then it is called as Functional interface.
+	
+	public interface Greeting {
+		void greet();
+	}	
+
+-> Using Functional Interface we can call or invoke Lambda Expression.
+-> Functional Interface can contain any number of Default and Static methods.
+-> Functional Interface rule is applicable only for Abstract method. It should contain only one Abstract method and it can contain any number of Static and Default methods.
+-> To represent our Interface as Functional Interface we will use @FunctionalInterface annotation.
+-> Writing @FunctionalInterface annotation is optional. If we write this annotation compiler will check do we have only one abstract method in the interface or not.
+
+Example 1:(Valid Functional Interface)
+--------------------------------------
+
+	@FunctionalInterface
+	public interface MyInterface {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+For a proof:
+
+	public interface Demo {
+		void m1();
+	}
+
+> javac Demo.java
+> javap Demo
+
+public interface Demo {
+	public abstract void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+
+}
+
+Example 2:(Invalid Functional Interface)
+----------------------------------------
+
+	@FunctionalInterface
+	public interface MyInterface {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+		public abstract void m2();
+	}
+
+//Here we have 2 abstract methods so that's why it is invalid.
+
+Example 3:
+----------
+
+	@FunctionalInterface
+	public interface Parent {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+	@FunctionalInterface
+	public interface Child extends Parent {
+		
+	}
+
+-> In the above scenario, Child interface doesn't have any abstract methods. Child having access for the Parent class abstract method hence Child is also Functional Interface.
+
+Example 4:
+----------
+
+	@FunctionalInterface
+	public interface Parent {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+	@FunctionalInterface
+	public interface Child extends Parent {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+-> In the above scenario, Child interface overriding Parent interface abstract method hence Child is having only one abstract method. So it is valid Functional Interface.
+
+Example 5:
+----------
+
+	@FunctionalInterface
+	public interface Parent {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+	@FunctionalInterface
+	public interface Child extends Parent {
+		void m2();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+-> In the above scenario, Child interface having 2 abstract methods hence it is not Functional Interface.
+
+Example 6:
+----------
+
+	@FunctionalInterface
+	public interface Parent {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+	public interface Child extends Parent {
+		void m2();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+-> In the above scenario, Child interface can contains any number of abstract methods because it is not having @FunctionalInterface annotation.
+
+Example 7:
+----------
+
+	public interface Parent {
+		void m1();// Here "public abstract" keywords are added by default by the compiler to the method.
+	}
+
+-> In the above scenario, Parent is Functional Interface only.
+-> Writing @FunctionalInterface is optional.
+-> If we write @FunctionalInterface, java compiler will verify that is valid Functional Interface or not.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+How to invoke Lambdas using Functional Interface?
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Without using Lambdas:
+----------------------
+
+	public interface MyInterface {
+		void m1();
+	}
+
+	public class MyApp implements MyInterface {
+		public void m1() {
+			System.out.println("Hello");
+		}
+
+		public static void main(String... args) {
+			MyInterface mi = new MyApp();
+			mi.m1();
+		}
+	}
+
+With using Lambdas:
+-------------------
+
+	public interface MyInterface {
+		void m1();
+	}
+
+	public class MyApp {
+		public static void main(String... args) {
+			MyInterface mi = () -> System.out.println("Hello");
+			mi.m1();
+		}
+	}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 1: With older approach using implementation classes.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public interface Greeting {
+	void greet();
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class EnglishGreeting implements Greeting {
+
+	@Override
+	public void greet() {
+		System.out.println("Hello, Good Morning..!!");
+	}
+
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class HindiGreeting implements Greeting {
+
+	@Override
+	public void greet() {
+		System.out.println("Namaskar...");
+	}
+
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class WellWisher {
+
+	public static void wish(Greeting greeting) {
+		greeting.greet();
+	}
+	
+	public static void main(String[] args) {
+		Greeting hindiGreeting = new HindiGreeting();
+		wish(hindiGreeting);
+		
+		Greeting englishGreeting = new EnglishGreeting();
+		wish(englishGreeting);
+	}
+
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-> In above approach we are creating separate implementation class for every language. If we want to support 20 languages then we have to create 20 implementation classes. It is not recommended.
+-> To avoid this problem we can use Anonymous implementation class.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 2: With older approach using Anonymous implementation for interface.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public interface Greeting {
+	void greet();
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class WellWisherAnonymous {
+	
+	public static void wish(Greeting greeting) {
+		greeting.greet();
+	}
+	
+	public static void main(String[] args) {
+		wish(new Greeting() {
+			@Override
+			public void greet() {
+				System.out.println("Namaskar...");
+			}
+		});
+		
+		wish(new Greeting() {
+			@Override
+			public void greet() {
+				System.out.println("Hello, Good Morning..!!");
+			}
+		});
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 3: With newer approach using Lambda.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+public interface Greeting {
+	void greet();
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class WellWisherLambda {
+
+	public static void wish(Greeting greeting) {
+		greeting.greet();
+	}
+	
+	public static void main(String[] args) {
+		wish(() -> System.out.println("Namaskar..."));
+		
+		wish(() -> System.out.println("Hello, Good Morning..!!"));
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 4: With newer approach using Lambda(Simplified way).
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+public interface Greeting {
+	void greet();
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class WellWisherSimplified {
+
+	public static void main(String[] args) {
+		Greeting hindiGreeting = () -> System.out.println("Namaskar...");
+		hindiGreeting.greet();
+		
+		Greeting englishGreeting = () -> System.out.println("Hello, Good Morning..!!");
+		englishGreeting.greet();
+	}
+
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> In java we have several functional interfaces, they are
+	- Runnable
+	- Callable
+	- ActionListener
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Working with Runnable interface available in java.lang package.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Runnable interface contains only one abstract method hence it is called as Functional interface.
+	- public void run();
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 1: Using implementation class.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class Demo1 implements Runnable {
+	@Override
+	public void run() {
+		for(int i = 1; i <= 10; i++) {
+			System.out.println(i);
+		}
+	}
+	
+	public static void main(String[] args) {
+		Demo1 demo = new Demo1();
+		Thread t = new Thread(demo);
+		t.start();
+	}
+
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 2: Using Anonymous class implementation.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class Demo2 {
+	public static void main(String[] args) {
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(int i = 1; i <= 10; i++) {
+					System.out.println(i);
+				}
+			}
+		});
+		t.start();
+	}
+}
+
+	or
+
+package com.tushar.beans;
+
+public class Demo3 {
+	public static void main(String[] args) {
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				for(int i = 1; i <= 10; i++) {
+					System.out.println(i);
+				}
+			}
+		};
+		Thread t = new Thread(runnable);
+		t.start();
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 3: Using Lambda.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+public class Demo4 {
+	public static void main(String[] args) {
+		Runnable runnable = () -> {
+			for(int i = 1; i <= 10; i++) {
+				System.out.println(i);
+			}
+		};
+		
+		Thread thread = new Thread(runnable);
+		thread.start();
+	}
+}
+
+
+	or
+
+package com.tushar.beans;
+
+public class Demo5 {
+	public static void main(String[] args) {
+		Thread thread = new Thread(() -> {
+			for(int i = 1; i <= 10; i++) {
+				System.out.println(i);
+			}
+		});
+		thread.start();
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Callable:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> In java, We are having Callable interface to work with Multi-Threading.
+-> Callable interface contains only one abstract method hence it is called as Functional interface.
+	- public Object call();
+-> call() returns future object.
+-> To execute Callable we will use ExecutorService.
+-> ExecutorService is a framework which introduced in java 1.5 version to work with Multi-Threading.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Callable Examples 1: Using Anonymous class.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class CallableDemo1 {
+	public static void main(String[] args) {
+		Callable callable = new Callable() {
+			@Override
+			public Object call() throws Exception {
+				for(int i = 1; i <= 20; i++) {
+					System.out.println(i);
+				}
+				return null;
+			}
+		};
+		ExecutorService executorService = Executors.newFixedThreadPool(1);
+		executorService.submit(callable);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Callable Examples 2: Using Lambda.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class CallableDemo1 {
+	public static void main(String[] args) {
+		Callable callable = () -> {
+			for(int i = 0; i <= 10; i++) {
+				System.out.println(i);
+			}
+			return null;
+		};
+		ExecutorService executorService = Executors.newFixedThreadPool(1);
+		executorService.submit(callable);
+	}
+}
+
+	or
+
+package com.tushar.beans;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class CallableDemo1 {
+	public static void main(String[] args) {
+		ExecutorService executorService = Executors.newFixedThreadPool(1);
+		executorService.submit(() -> {
+			for(int i = 0; i <= 10; i++) {
+				System.out.println(i);
+			}
+			return null;
+		});
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Comparator Examples 1: Using Normal Approach.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class SortingDemo1 {
+
+	public static void main(String[] args) {
+		ArrayList<Integer> al = new ArrayList<Integer>();
+		al.add(10);
+		al.add(21);
+		al.add(32);
+		al.add(5);
+		al.add(8);
+		
+		System.out.println("Elements Before Sorting :: " + al);
+		
+		Collections.sort(al, new ElementsSortingComparator());
+		System.out.println("Elements After Sorting :: " + al);
+	}
+
+}
+
+class ElementsSortingComparator implements Comparator<Integer> {
+	@Override
+	public int compare(Integer o1, Integer o2) {
+//		if(o1 > o2) {
+//			return -1;
+//		} else if(o1 < o2) {
+//			return 1;
+//		} else {
+//			return 0;
+//		}
+		
+		return (o1 > o2) ? -1 : (o1 < o2) ? 1 : 0;
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Comparator Examples 2: Using Anonymous class Approach.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class SortingDemo2 {
+
+	public static void main(String[] args) {
+		ArrayList<Integer> al = new ArrayList<Integer>();
+		al.add(10);
+		al.add(21);
+		al.add(32);
+		al.add(5);
+		al.add(8);
+		
+		System.out.println("Elements Before Sorting :: " + al);
+		
+		Collections.sort(al, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return (o1 > o2) ? -1 : (o1 < o2) ? 1 : 0;
+			}
+		});
+		System.out.println("Elements After Sorting :: " + al);
+	}
+
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Comparator Examples 3: Using Lambda Approach.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class SortingDemo2 {
+
+	public static void main(String[] args) {
+		ArrayList<Integer> al = new ArrayList<Integer>();
+		al.add(10);
+		al.add(21);
+		al.add(32);
+		al.add(5);
+		al.add(8);
+		
+		System.out.println("Elements Before Sorting :: " + al);
+		
+		Collections.sort(al, (Integer o1, Integer o2) -> {
+				return (o1 > o2) ? -1 : (o1 < o2) ? 1 : 0;
+			});
+		System.out.println("Elements After Sorting :: " + al);
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Mapping Operations in Streams
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Mapping operations are belongs to Intermediate operation.
+
+-> Mapping operations are those operations that transform the elements of a stream and return a new stream with transformed elements.
+
+Example:
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class StreamMapping {
+    public static void main(String[] args) {
+        
+        List<String> list = new ArrayList<>();
+        list.add("Anushka");
+        list.add("Trisha");
+        list.add("Nayantara");
+        list.add("Pooja Hedge");
+        list.add("Anupama Parmeshwaram");
+        list.add("Amisha Patel");
+
+        Stream<String> stream = list.stream();
+
+        stream.map(name -> name.toUpperCase()).forEach(System.out::println);
+    }
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-> In last session we discusses about below concepts
+
+I) What is Stream API?
+II) What are the advantages of using Stream API
+iii) Characteristics of Stream API
+iv) What type of operations we can perform using Stream API
+	- Intermediate Operations
+	- Terminal Operations
+v) Stream Creation
+	I) of() method
+	II) stream() method
+
+vi) Filter operation using Streams -- filter(Predicate p)
+vii ) Mapping operation using Streams -- map(Function f)
+
+
