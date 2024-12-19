@@ -957,6 +957,8 @@ Predicate:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 -> Predicate is pre-defined Functional interface.
 -> Predicate is having an abstract method called test() which is used to invoke Lambda Expression.
+-> Predicate contains and(), or() & negate() methods which are default methods.
+-> Predicate contains isEqual() & not() method which is static method.
 -> Predicate is used to perform some conditional check and returns true or false.
 -> Predicate is present in java.util.function package.
 -> If we have a Lambda which checks condition and returns true or false then we can invoke that Lambda using Predicate Functional interface.
@@ -1087,8 +1089,13 @@ Predicate Joining:
 		-> It combines the predicate and any of the predicate is true then returns true.
 		-> We can do method chaining.
 			- Like predicate1.or(predicate2).or(predicateN).
-	- isEqual() -> It is static method. //Not took in this course
--> and(), or() and negate() are default methods in Predicate interface.
+	- isEqual() 
+		-> It is static method. //Not covered in this class
+	- not() 
+		-> It is static method and now it is deprecated.//Not covered in this class
+
+-> and(), or() & negate() are default methods in Predicate interface.
+-> isEqual() & not() are the static methods in Predicate interface.
 -> Using and() & or() methods we can achieve predicate joining.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1233,11 +1240,12 @@ BiPredicate:
 -> If we want to provide 2 parameters as an input for Lambda and return the result then we can use BiPredicate for this.
 -> BiPredicate<T, T> is Functional interface which contains a abstract method test().
 -> BiPredicate<T, T> takes 2 parameters and returns Boolean value.
--> BiPredicate contains only default methods but not any static method as Predicate have.
+-> BiPredicate contains only default methods.
 -> Default methods:
 	- and()
 	- or()
 	- negate()
+-> BiPredicate does not contains any static method as Predicate have.
 
 Example 1: BiPredicate
 
@@ -1257,6 +1265,7 @@ Supplier:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 -> It is pre-defined Functional interface.
 -> It contains only one abstract method i.e. get();
+-> It does not contain any default and static methods.
 -> Supplier is an interface that does not take any arguments but it produces a value when the get() function got called.
 -> Supplier are useful when our Lambda is not taking any input but it is providing some output.
 -> There is no BiSupplier because the Supplier don't take any input so no chance of BiSupplier.
@@ -1302,12 +1311,379 @@ Consumer:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 -> It is pre-defined Functional interface.
 -> It contains only one abstract method i.e. accept(T t).
--> Consumer will take input but it will not return anything.
+-> It contains only one default method andThen().//Not covered in the class
+-> There is no static method in it.
+-> Consumer will take only one input but it will not return anything.
+-> Consumer can be used in a scenario where our Lambda should take input and perform operation based on the input but no need to return anything.
+	- Syntax:
+		interface Consumer {
+			void accept(T t);
+		}
+
+Example 1: Print String and Integer
+-----------------------------------
+
+package com.tushar.beans;
+
+import java.util.function.Consumer;
+
+public class ConsumerDemo {
+	public static void main(String[] args) {
+		Consumer<String> consumer1 = (name) -> System.out.println("Good Morning!!!");
+		consumer1.accept("Tushar Patil");
+		
+		Consumer<Integer> consumer2 = i -> System.out.println(i * i);
+		consumer2.accept(10);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+BiConsumer:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> If we want to supply 2 inputs for a Lambda and no return then we can use BiConsumer.
+	- Syntax:
+		interface BiConsumer<T, U> {
+			void accept(T t, U u);
+		}
+		
+		T - Represents first argument.
+		U - Represents second argument.
+-> It contains only one default method andThen().//Not covered in the class
+-> There is no static method in it.
+Note: BiConsumer interface having only one abstract method i.e. accept(T t, U u). It will take 2 inputs and performs operation but it will not return 
+anything.
+
+Example 1: Print Strings
+------------------------
+
+package com.tushar.beans;
+
+import java.util.function.BiConsumer;
+
+public class BiConsumerDemo {
+	public static void main(String[] args) {
+		BiConsumer<String, String> biConsumer = (string1, string2) -> {
+			System.out.println("Hi, I am " + string1);
+			System.out.println("I am from " + string2);
+		};
+		
+		biConsumer.accept("Tushar", "Pune");
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Function:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Function is pre-defined Functional interface.
+-> Function is having an abstract method called apply() which is used to invoke Lambda Expression.
+-> apply() method takes 1 input and returns output.
+-> Function contains compose() & andThen() methods which are default methods.
+-> Function contains identity() method which is static method.
+-> Function is used to take input and provide output.
+-> Function is present in java.util.function package.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Requirement: Write a Lambda for below method and call using pre-defined Functional interface.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Example 1:
+----------
+
+public Ticket bookTicket(Passenger passenger) {
+	//Logic to book ticket
+	return ticketObject;
+}
+
+-> As we can see, above bookTicket() method taking passenger object as input and returning Ticket object as output.
+-> To work with this kind of requirements we can use Function interface.
+-> Function is a pre-defined Functional interface 
+-> Function interface can take input and provide output.
+-> Function interface contains only one abstract method i.e. R apply(T t)
+	- Syntax:
+		interface Function {
+			R apply(T t);
+		}
+		
+		T - Represents input/parameter object type.
+		R - Represents returning object type.
+
+Note: In realtime most of our requirements will match with Function interface only.
+
+Example 2:
+----------
+
+Taking LoginForm object as input and returning String as output.
+
+public String login(LoginForm input) {
+	//Check login credentials with DB.
+	return status;
+}
+
+Example 3:
+----------
+
+Taking UserForm object input and returning String as output.
+
+public String registerUser(UserForm input) {
+	//Insert user in DB.
+	return status;
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.function.Function;
+
+public class FunctionDemo1 {
+	public static void main(String[] args) {
+		Function<String, String> function1 = string -> string.toUpperCase();
+		System.out.println(function1.apply("Tushar"));
+		
+		Function<Integer, Integer> function2 = number -> number * number;
+		System.out.println(function2.apply(10));
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+BiFunction:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> BiFunction is pre-defined Functional interface.
+-> BiFunction is having an abstract method called apply() which is used to invoke Lambda Expression.
+-> apply() method takes 2 inputs and returns output.
+-> BiFunction contains andThen() method which is default method.
+-> BiFunction does not contain any static method.
+-> BiFunction is used to take input and provide output.
+-> BiFunction is present in java.util.function package.
+
+	- Syntax:
+		interface BiFunction<T, U, R> {
+			R apply(T t, U u);
+		}
+
+		T - First argument type.
+		U - Second argument type.
+		R - Third argument type.
+
+Example 1:
+----------
+
+package com.tushar.beans;
+
+import java.util.function.BiFunction;
+
+public class BiFunctionDemo1 {
+	public static void main(String[] args) {
+		BiFunction<Integer, Integer, Integer> biFunction1 = (number1, number2) -> (number1 * number2);
+		System.out.println(biFunction1.apply(10, 20));
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Summary:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Predicate interface will take one input and returns Boolean value as an output.
+	- test(argument 1) 
+		-> abstract method.
+	- and() 
+		-> default method.
+	- or() 
+		-> default method.
+	- negate() 
+		-> default method.
+	- isEqual()
+		-> static method.
+	- not()
+		-> static method.
+
+-> BiPredicate interface will take 2 inputs and returns Boolean value as an output.
+	- test(argument 1, argument 2) 
+		-> abstract method.
+	- and() 
+		-> default method.
+	- or() 
+		-> default method.
+	- negate() 
+		-> default method.
+Note: Don't have any static method as Predicate have.
+
+-> Supplier interface will not take any input and returns output.
+	- get() 
+		-> abstract method.
+Note 1: Supplier don't have default and static methods.
+Note 2: Supplier don't have BiSupplier because it doesn't take any input. 
+
+-> Consumer interface will take one input and it won't return anything.
+	- accept(argument 1)
+		-> abstract method.
+	- andThen() 
+		-> default method.
+Note: Don't have any static method.
+
+-> BiConsumer interface will take 2 inputs and it won't return anything.
+	- accept(argument 1, argument 2)
+		-> abstract method.
+	- andThen() 
+		-> default method.
+Note: Don't have any static method.
+
+-> Function interface will take one input and returns output.
+	- returnType apply(argument 1)
+		-> abstract method.
+	- andThen() 
+		-> default method.
+	- compose() 
+		-> default method.
+	- identity()
+		-> static method.
+
+-> BiFunction interface will take 2 inputs and returns output.
+	- returnType apply(argument 1, argument 2)
+		-> abstract method.
+	- andThen() 
+		-> default method.
+Note: Don't have any static method.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Interface related changes in Java 8:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-> What is interface?
+	- Interface is a contract which contains specification.
+	- Interface should contain only abstract methods. (This is true upto Java 1.7v)
+	- The method which does not having body is called as abstract method.
+		-> Example: 
+			public User getUserById(Integer userId);
+	- From Java 1.8v onwards we can write concrete methods also in interface.
+	- The method which contains body is called as Concrete method.
+	- Example:
+		public Integer sum(Integer number1, Integer number2) {
+			return a + b;
+		}
+Note: Interface concrete methods should be "default", "static" or "private(Java 9)".
+
+-> abstract methods available in the interface are by default public and abstract. No need to write public and abstract keyword explicitly.
+	- Example: public abstract void cleanVehicle(); => void cleanVehicle();
+
+Example 1:
+----------
+
+package com.tushar.beans;
+
+public interface Vehicle {
+	void cleanVehicle();//By default it having public abstract keyword. It is abstract method.
+
+	default void startVehicle() {// Default method with default keyword which is concrete method and valid in interface.
+		System.out.println("Vehicle started!!!");
+	}
+}
+
+-> As per Java rule, when we are implementing interface, we have to implement all the abstract methods available in the interface.
+-> If we want to add any new abstract method in interface then the implemented classes will be affected. (Both Santro and I20Car).
+-> To avoid this problem default method got introduced in Java 1.8v.
+-> If we want to add new functionality in Vehicle interface that should be applicable for only I20Car not for Santro. Without affecting the existing functionality then we should go for "default" method concept. And if we want to allow the overriding the go for default method. Need to call using implementation class object.
+-> If there is some logic which is common across the implementation class without affecting the existing functionality and don't want to allow overriding the we should go for static method. Need to call using Interface name.
+
+Example:
+--------
+
+package com.tushar.beans;
+
+public interface Vehicle {
+	void cleanVehicle();//By default it having public abstract keyword. It is abstract method.
+	
+	default void sensor() {
+		System.out.println("Sensor added!!!");
+	}
+	
+	default void startVehicle() {// Default method with default keyword which is concrete method and valid in interface.
+		System.out.println("Vehicle started!!!");
+	}
+	
+	static void fuelCheck() {
+		System.out.println("Checking fuel!!!");
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+public class I20Car implements Vehicle {
+	@Override
+	public void cleanVehicle() {
+		System.out.println("I20 car is getting cleaned.");
+	}
+	
+	@Override
+	public void sensor() {
+		System.out.println("Sensor overrided in I20 class!!!");
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+public class Santro implements Vehicle {
+	@Override
+	public void cleanVehicle() {
+		System.out.println("Santro car is getting cleaned.");
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+public class MyApp {
+	public static void main(String[] args) {
+		Vehicle santroVehicle = new Santro();
+		santroVehicle.cleanVehicle();
+		santroVehicle.startVehicle();
+		
+		Vehicle i20Vehicle = new I20Car();
+		i20Vehicle.cleanVehicle();//It is abstract method which is implemented in the implementation classes and and called using implementation 					    class object.
+		i20Vehicle.startVehicle();//Default method call which is not overridden in I20Car and called using implementation class object.
+		i20Vehicle.sensor();//Default method call which is overridden in I20Car class and called using implementation class object.
+		Vehicle.fuelCheck();//Static method call
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Static Method:
+--------------
+-> We can add static method in interface.
+-> This concept introduced in Java 1.8v.
+-> For static method static keyword is mandatory.
+-> The reason to introduced this concept is that existing functionality (implemented classes) should not get disturbed and also should not implement forcefully to override this newly added method.
+-> To call this static method we need interface name.
+-> If our need is that a concrete method which cannot be able to override in the implementation classes then go for static method concept.
+
+
+Default Method:
+---------------
+-> We can add default method in interface.
+-> This concept introduced in Java 1.8v.
+-> For default method "default" keyword is mandatory.
+-> The reason to introduced this concept is that existing functionality (implemented classes) should not get disturbed and also should not implement forcefully to override this newly added method.
+-> To call this default method we need implemented class object.
+-> If our need is that a concrete method which can be override in the implementation classes then go for default method concept
+
+Private Method://Not covered in the class.
+---------------
 
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Method Reference:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Constructor Reference:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
