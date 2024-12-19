@@ -2,7 +2,6 @@ package com.tushar.beans;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class ObjectSorting3 {
@@ -20,7 +19,7 @@ public class ObjectSorting3 {
 			System.out.println(p);
 		}
 		
-		Collections.sort(persons, (Person o1, Person o2) -> {
+		Collections.sort(persons, (o1, o2) -> {
 			return o1.getPersonName().compareTo(o2.getPersonName());
 		});
 		System.out.println("=====Objects after sorting=====");

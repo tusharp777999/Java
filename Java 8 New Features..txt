@@ -651,6 +651,21 @@ public class CallableDemo1 {
 }
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
+Comparator:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Comparator is a predefined interface available in java which is used to implement for Customized sorting.
+-> It is present in java.util.Comparator interface contains compare() method.
+	- public Interger compare(Object o1, Object o2);
+
+-> We can work with Comparator interface in below 3 ways.
+	- Create class to implement Comparator interface and override compare() method.
+	- Provide Anonymous implementation for Comparator interface.
+	- Provide implementation for Comparator using Lambda Expression.
+
+-> In order to perform Customized sorting we will use Collections.sort() method like below.
+	- Collections.sort(listOfObjectsToSort, Comparator<T>);
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 Comparator Examples 1: Using Normal Approach.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 package com.tushar.beans;
@@ -906,7 +921,7 @@ public class ObjectSorting3 {
 			System.out.println(p);
 		}
 		
-		Collections.sort(persons, (Person o1, Person o2) -> {
+		Collections.sort(persons, (o1, o2) -> {
 			return o1.getPersonName().compareTo(o2.getPersonName());
 		});
 		System.out.println("=====Objects after sorting=====");
@@ -917,6 +932,330 @@ public class ObjectSorting3 {
 }
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment: Write a java program to sort below Map based on values available in the Map using Lambda Expression.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+1   USA
+91  India
+61  Australia
+86  China
+33  France
+92  Pakistan
+852 Hong Kong
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Predefined Functional interfaces introduced in java 8.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Predicate
+-> Supplier
+-> Consumer
+-> Function
+
+-> The above Functional interface are provided in java.util.function package.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Predicate:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Predicate is pre-defined Functional interface.
+-> Predicate is having an abstract method called test() which is used to invoke Lambda Expression.
+-> Predicate is used to perform some conditional check and returns true or false.
+-> Predicate is present in java.util.function package.
+-> If we have a Lambda which checks condition and returns true or false then we can invoke that Lambda using Predicate Functional interface.
+
+Example:
+	- Check whether given number is greater than 20 or not.
+	
+	//Logic without Lambda
+	public boolean test(int number) {
+		if(number > 20) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//Logic with Lambda
+	(number) -> number > 20;
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//With Predicate
+	package com.tushar.beans;
+
+	import java.util.function.Predicate;
+
+	public class NumberCheck {
+		public static void main(String[] args) {
+			Predicate<Integer> predicate = (number) -> number > 20;
+			System.out.println(predicate.test(21));
+			System.out.println(predicate.test(15));
+		}
+	}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Requirement: Write a program to check person name is having 7 characters or not. If name is having 7 or more characters return true otherwise return false.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.function.Predicate;
+
+public class NameLengthCheck {
+	public static void main(String[] args) {
+		Predicate<String> predicate = name -> name.length() >=7; 
+		System.out.println(predicate.test("Tushar Patil"));// true
+		System.out.println(predicate.test("Hello"));// false
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Requirement: Write a program to print names which are starting with character 'A' using lambda from below list.
+Names: Kajal, Samantha, Anushka, Trisha, Anupama, Nayanthara, Aishwarya.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.function.Predicate;
+
+public class NamesPrinting {
+	public static void main(String[] args) {
+		String[] names = {"Kajal", "Samantha", "Anushka", "Trisha", "Anupama", "Nayanthara", "Aishwarya"};
+		Predicate<String> predicate = name -> name.startsWith("A");
+		
+		for(String name : names) {
+			if(predicate.test(name)) {
+				System.out.println(name);
+			}
+		}
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Assignment:
+-----------
+
+Requirement: Write a program to print persons names who are eligible for vote from below person list.
+
+Person Details:
+---------------
+Name = Raju, Age = 20
+Name = Nick, Age = 10
+Name = Rani, Age = 21
+Name = Sita, Age = 19
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
+public class PersonNamesPrinter {
+	public static void main(String[] args) {
+		Person p1 = new Person("Raju", 21);
+		Person p2 = new Person("Chetan", 23);
+		Person p3 = new Person("Anil", 16);
+		Person p4 = new Person("Gita", 24);
+		Person p5 = new Person("Suchitra", 26);
+		
+		List<Person> persons = Arrays.asList(p1, p2, p3, p4, p5);
+		
+		Predicate<Person> predicate = person -> person.getAge() >= 18;
+		
+		for(Person person : persons) {
+			if(predicate.test(person)) {
+				System.out.println(person.getName());
+			}
+		}
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Predicate Joining:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> To combine multiple predicates we will use Predicate Joining.
+-> We can do method chaining also.
+-> We have below methods in Predicate.
+	- test() 
+		-> It is abstract method.
+		-> It takes only one parameter and returns Boolean value.
+	- negate() 
+		-> It is default method.
+		-> It does not take any parameter it just reversed the given predicate.
+	- and() 
+		-> It is default method.
+		-> It combines the predicate and all predicate are true then it return true.
+		-> We can do method chaining.
+			- Like predicate1.and(predicate2).and(predicateN).
+	- or() 
+		-> It is default method.
+		-> It combines the predicate and any of the predicate is true then returns true.
+		-> We can do method chaining.
+			- Like predicate1.or(predicate2).or(predicateN).
+	- isEqual() -> It is static method. //Not took in this course
+-> and(), or() and negate() are default methods in Predicate interface.
+-> Using and() & or() methods we can achieve predicate joining.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Requirement: Write a program to identify who is eligible for marriage.
+Condition: Person age should be >= 21 and <= 64.
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Example 1: and()
+----------------
+
+public class PredicateJoinForAnd {
+	public static void main(String[] args) {
+		Person p1 = new Person("Raju", 21);
+		Person p2 = new Person("Chetan", 23);
+		Person p3 = new Person("Anil", 67);
+		Person p4 = new Person("Gita", 14);
+		Person p5 = new Person("Suchitra", 26);
+		
+		List<Person> persons = Arrays.asList(p1, p2, p3, p4, p5);
+		
+		Predicate<Person> ageLowerUpperLimit = person -> person.getAge() >= 21 && person.getAge() <= 64;
+		
+		// Here it we are using the conditional operator within single Predicate.
+		System.out.println("Predicate with single condition:");
+				
+		for(Person person : persons) {
+			if(ageLowerUpperLimit.test(person)) {
+				System.out.println(person);
+			}
+		}
+		
+		
+		Predicate<Person> ageLowerLimit = person -> person.getAge() >= 21;
+		
+		Predicate<Person> ageUpperLimit = person -> person.getAge() <= 64;
+		
+		// Here it we are using the conditional operator which shows a lengthy approach.
+		System.out.println("Predicate without joining methods:");
+		
+		for(Person person : persons) {
+			if(ageLowerLimit.test(person) && ageUpperLimit.test(person)) {
+				System.out.println(person);
+			}
+		}
+		
+		// Here we are using the Predicate joining.
+		Predicate<Person> predicate = ageLowerLimit.and(ageUpperLimit);
+		System.out.println("Predicate with joining mehtods:");
+		
+		for(Person person : persons) {
+			if(predicate.test(person)) {
+				System.out.println(person);
+			}
+		}		
+	}
+}
+
+Example 2: or()
+---------------
+package com.tushar.beans;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
+public class PredicateJoinForOr {
+	public static void main(String[] args) {
+		Person p1 = new Person("Raju", 21);
+		Person p2 = new Person("Chetan", 23);
+		Person p3 = new Person("Anil", 67);
+		Person p4 = new Person("Gita", 14);
+		Person p5 = new Person("Suchitra", 26);
+		
+		List<Person> persons = Arrays.asList(p1, p2, p3, p4, p5);
+		
+		Predicate<Person> ageLowerUpperLimit = person -> person.getAge() >= 21 || person.getAge() <= 64;
+		
+		// Here it we are using the conditional operator within single Predicate.
+		System.out.println("Predicate with single condition:");
+				
+		for(Person person : persons) {
+			if(ageLowerUpperLimit.test(person)) {
+				System.out.println(person);
+			}
+		}
+		
+		
+		Predicate<Person> ageLowerLimit = person -> person.getAge() >= 21;
+		
+		Predicate<Person> ageUpperLimit = person -> person.getAge() <= 64;
+		
+		// Here it we are using the conditional operator which shows a lengthy approach.
+		System.out.println("Predicate without joining methods:");
+		
+		for(Person person : persons) {
+			if(ageLowerLimit.test(person) || ageUpperLimit.test(person)) {
+				System.out.println(person);
+			}
+		}
+		
+		// Here we are using the Predicate joining.
+		Predicate<Person> predicate = ageLowerLimit.or(ageUpperLimit);
+		System.out.println("Predicate with joining mehtods:");
+		
+		for(Person person : persons) {
+			if(predicate.test(person)) {
+				System.out.println(person);
+			}
+		}		
+	}
+}
+
+Example 3: negate()
+-------------------
+
+package com.tushar.beans;
+
+import java.util.function.Predicate;
+
+public class PredicateEvenCheck {
+	public static void main(String[] args) {
+		Predicate<Integer> predicate = i -> i % 2 == 0;
+		isEvenCheck(predicate, 10);
+		isEvenCheckNegate(predicate, 10);
+	}
+	
+	public static void isEvenCheck(Predicate<Integer> predicate, Integer number) {
+		System.out.print("Predicate without negate(): ");
+		System.out.println(predicate.test(number));
+	}
+	
+	public static void isEvenCheckNegate(Predicate<Integer> predicate, Integer number) {
+		System.out.print("Predicate with negate(): ");
+		System.out.println(predicate.negate().test(number));
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+BiPredicate:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Predicate<T> takes only one parameter and returns result.
+-> If we want to provide 2 parameters as an input for Lambda and return the result then we can use BiPredicate for this.
+-> BiPredicate<T, T> is Functional interface which contains a abstract method test().
+-> BiPredicate<T, T> takes 2 parameters and returns Boolean value.
+-> BiPredicate contains only default methods but not any static method as Predicate have.
+-> Default methods:
+	- and()
+	- or()
+	- negate()
+
+Example 1: BiPredicate
+
+package com.tushar.beans;
+
+import java.util.function.BiPredicate;
+
+public class Demo1 {
+	public static void main(String[] args) {
+		BiPredicate<Integer, Integer> biPredicate = (number1, number2) -> ((number1 + number2) >= 100);
+		System.out.println(biPredicate.test(10, 200));
+	}
+}
+
+
+
+
+
 
 
 
