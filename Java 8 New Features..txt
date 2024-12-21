@@ -1581,8 +1581,11 @@ public interface Vehicle {
 -> As per Java rule, when we are implementing interface, we have to implement all the abstract methods available in the interface.
 -> If we want to add any new abstract method in interface then the implemented classes will be affected. (Both Santro and I20Car).
 -> To avoid this problem default method got introduced in Java 1.8v.
--> If we want to add new functionality in Vehicle interface that should be applicable for only I20Car not for Santro. Without affecting the existing functionality then we should go for "default" method concept. And if we want to allow the overriding the go for default method. Need to call using implementation class object.
--> If there is some logic which is common across the implementation class without affecting the existing functionality and don't want to allow overriding the we should go for static method. Need to call using Interface name.
+-> If we want to add new functionality in Vehicle interface that should be applicable for only I20Car not for Santro. Without affecting the existing 
+functionality then we should go for "default" method concept. And if we want to allow the overriding the go for default method. Need to call using 
+implementation class object.
+-> If there is some logic which is common across the implementation class without affecting the existing functionality and don't want to allow overriding the 
+we should go for static method. Need to call using Interface name.
 
 Example:
 --------
@@ -1643,7 +1646,8 @@ public class MyApp {
 		santroVehicle.startVehicle();
 		
 		Vehicle i20Vehicle = new I20Car();
-		i20Vehicle.cleanVehicle();//It is abstract method which is implemented in the implementation classes and and called using implementation 					    class object.
+		i20Vehicle.cleanVehicle();//It is abstract method which is implemented in the implementation classes and and called using implementation 
+					class object.
 		i20Vehicle.startVehicle();//Default method call which is not overridden in I20Car and called using implementation class object.
 		i20Vehicle.sensor();//Default method call which is overridden in I20Car class and called using implementation class object.
 		Vehicle.fuelCheck();//Static method call
@@ -1657,7 +1661,8 @@ Static Method:
 -> We can add static method in interface.
 -> This concept introduced in Java 1.8v.
 -> For static method static keyword is mandatory.
--> The reason to introduced this concept is that existing functionality (implemented classes) should not get disturbed and also should not implement forcefully to override this newly added method.
+-> The reason to introduced this concept is that existing functionality (implemented classes) should not get disturbed and also should not implement 
+forcefully to override this newly added method.
 -> To call this static method we need interface name.
 -> If our need is that a concrete method which cannot be able to override in the implementation classes then go for static method concept.
 
@@ -1667,7 +1672,8 @@ Default Method:
 -> We can add default method in interface.
 -> This concept introduced in Java 1.8v.
 -> For default method "default" keyword is mandatory.
--> The reason to introduced this concept is that existing functionality (implemented classes) should not get disturbed and also should not implement forcefully to override this newly added method.
+-> The reason to introduced this concept is that existing functionality (implemented classes) should not get disturbed and also should not implement 
+forcefully to override this newly added method.
 -> To call this default method we need implemented class object.
 -> If our need is that a concrete method which can be override in the implementation classes then go for default method concept
 
@@ -1679,20 +1685,416 @@ Private Method://Not covered in the class.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 Method Reference:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Method references, as the name suggests this is used to refer from one method to another method.
+-> Method references are similar to object references.
 
+-> Consumer is a Functional interface which will take input and will perform operation on that input but it will not return anything, Consumer contains 
+accept() method.
 
+Example 1:
+----------
+	Cosumer<String> consumer = s -> System.out.println(s);
+	consumer.accept("Hi");
+
+-> The above code can be written like below using static Method reference.
+	Cosumer<String> consumer = s -> System.out::println;
+	consumer.accept("Hi");
+
+-> Function is a Functional interface which will take the input and will return output. Function contains apply() method.
+
+Example 2:
+----------
+	Function<Person, Integer> function = p -> p.getAge();
+	Integer personage = function.apply(personObject);
+
+-> The above code can be written like below using instance Method reference.
+	Function<Person, Integer> function = p -> p::getAge();
+	Integer personage = function.apply(personObject);
+
+Example 3:
+----------
+package com.tushar.beans;
+
+import java.util.function.Consumer;
+
+public class MethodReference1 {
+	public static void main(String[] args) {
+		Consumer<String> consumer = c -> System.out.println(c);
+		consumer.accept("Hello");
+		
+		Consumer<String> consumerMethodReference = System.out::println;
+		consumer.accept("Hello Reference");
+	}
+}
+
+Example 4:
+----------
+package com.tushar.beans;
+
+public class Test {
+	
+	public static void m2() {
+		System.out.println("This is m2() method...");
+	}
+	
+	public static void main(String[] args) {
+		MyInterface myInterface = () -> System.out.println("This is m1() method...");
+		myInterface.m1();
+		
+		MyInterface myInterface1 = Test::m2;
+		myInterface1.m1();
+	}
+}
+
+interface MyInterface {
+	void m1();
+}
+
+When you go for Method Reference?
+---------------------------------
+-> When you want to implement a Functional interface without writing a Lambda and you want to reuse the existing method in place of Lambda then we go for 
+Method reference.
+
+-> By using Method reference we can reuse existing logic instead of writing Lambdas.
+-> Method reference is alternative to Lambda.
+
+	 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 Constructor Reference:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Example 1:
+----------
+
+package com.tushar.beans;
+
+public class Sample {
+	public static void main(String[] args) {
+		SampleInterface sampleInterface = () -> new Sample();
+		SampleInterface sampleInterface1 = Sample::new;
+	}
+}
+
+interface SampleInterface {
+	Sample get();
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Stream API:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> The addition of the Stream API was one of the major feature added to the Java 8.
+-> A Stream in Java is defined as Sequence of elements from source that supports aggregate operations.
+-> Stream API is used to process the data.
+-> Stream API is not storing the data, It is meant for processing the data.
+
+Note: In java we will use Collections to store the data and Streams to process the data.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Few important points about Stream:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Stream is not a data structure.
+-> Stream is used to perform bunch of operations on the data.
+-> Stream will take the data from a Collection or Array.
+-> Stream will perform operations on the data of Collection or Array but it will not change original Collection or Array data.
+
+Scenario 1:  Search flights from HYD to CJB
+-------------------------------------------
+
+	Condition 1: Non-stop flight.
+
+	Condition 2: Indigo Airlines.
+
+	Condition 3: Before 12 p.m.
+
+	Condition 4: Budget 5000 INR (Economy).
+
+-> In the above requirement, we have several conditions to filter the data.
+-> Filtering the data is nothing but, performing some operations on the original data.
+
+Scenario 2: Get the TCS Employee details
+----------------------------------------
+	
+	Condition 1: Get the Employees who are working in Hyderabad location.
+
+	Condition 2: Salary >= 2.5 Lakh.
+
+	Condition 3: Who are working in TCS from 2015.
+
+	Condition 4: Who are working in passport project.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Stream Creation:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. From Collections (List, Set, etc.)
+	You can create a stream from any collection (such as a List, Set, or Queue) by calling the stream() method on the collection.
+
+Example:
+--------
+	List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+	Stream<Integer> stream = list.stream();  // Create a stream from a List
+
+2. From Arrays
+
+	- You can create a stream from an array using Arrays.stream().
+Example:
+--------
+	int[] array = {1, 2, 3, 4, 5};
+	IntStream stream = Arrays.stream(array);  // Primitive IntStream
+
+	
+	- For reference types, you can create a generic stream:
+Example:
+--------
+	String[] array = {"a", "b", "c"};
+	Stream<String> stream = Arrays.stream(array);  // Stream of Strings
+
+3. From Individual Values (Stream.of)
+
+	- You can create a stream from a sequence of elements using Stream.of().
+Example:
+--------
+	Stream<String> stream = Stream.of("apple", "banana", "cherry");  // Create a stream from individual elements
+
+4. From File (I/O Streams)
+
+	- Java Streams can also be used for file processing. You can create a stream from a file using Files.lines(), which creates a stream of lines from a file.
+Example:
+--------
+	try {
+    		Stream<String> lines = Files.lines(Paths.get("file.txt"));
+    		// process the lines
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+
+5. From Stream Builder (Stream.builder)
+
+	- You can build a stream using a Stream.Builder. This allows you to build a stream in a more controlled way.
+Example:
+--------
+	Stream<Integer> stream = Stream.<Integer>builder()
+                               .add(1)
+                               .add(2)
+                               .add(3)
+                               .build();  // Manually building a stream
+
+6. From Random Number Generators (Streams of Primitives)
+
+	- You can generate streams of random numbers using methods from the Random class or Stream class, such as IntStream, LongStream, or DoubleStream.
+Example:
+--------
+	Random random = new Random();
+	IntStream intStream = random.ints(5);  // Stream of 5 random integers
+
+7. From Generator Functions (Streams with Iterative Data)
+
+	- You can use Stream.generate() or Stream.iterate() to create streams that generate data based on a function.
+	
+	- Using Stream.generate() (for an infinite stream, for example):
+Example:
+--------
+	Stream<Integer> infiniteStream = Stream.generate(() -> (int) (Math.random() * 100));
+
+	- Using Stream.iterate() (for a finite sequence, like a Fibonacci sequence):
+Example:
+--------
+	Stream<Integer> fibonacci = Stream.iterate(0, n -> n + 1).limit(10);  // Generate first 10 numbers
+
+8. From Optional (Optional.stream)
+
+	- If you have an Optional<T>, you can create a stream that may contain either a single element or be empty.
+Example:
+--------
+	Optional<String> optional = Optional.of("Hello");
+	Stream<String> stream = optional.stream();  // Stream containing the value, or empty if absent
+
+9. Parallel Streams
+	- You can also create a parallel stream, which splits the data processing across multiple threads. This is a special case of the regular stream, but it processes data in parallel for performance reasons.
+
+Example:
+--------
+	List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+	Stream<Integer> parallelStream = list.parallelStream();  // Parallel stream
 
 
 
+-> Streams can be created from different element sources.
+	- Using of() method we can create Stream.
+	- Using stream() method also we can create Stream.
+
+Approach 1:
+-----------
+	Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5, 6);
+
+Approach 2:
+-----------
+	List<String> list = new ArrayList<>();
+        list.add("Anushka");
+        list.add("Trisha");
+        list.add("Nayantara");
+        list.add("Pooja Hedge");
+        list.add("Anupama Parmeshwaram");
+        list.add("Amisha Patel");
+
+	Stream<String> stream = list.stream();
+
+-> By using Streams we can perform below operations on the data.
+	- Intermediate Operations.
+	- Terminal Operation.
+
+Intermediate Operations:
+------------------------
+	- Intermediate operations methods will not produce any results. They usually accept Functional interface as parameter and always returns new Stream.
+Example:
+--------
+	- filter() and map() methods.
 
 
+Terminal Operations:
+--------------------
+	- Terminal operations methods will produce some results.
+Example:
+--------
+	- count(), collect(), distinct(), forEach() etc.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Stream with Filtering:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Stream interface having filter() method.
+-> filter() method will take Predicate as input.
+-> Predicate is a Functional interface which will take input and returns Boolean value.
+-> Predicate interface contains test() method which is abstract method. This method is used to execute Lambdas.
 
+Example 1: Numbers Filter
+-------------------------
+package com.tushar.beans;
 
+import java.util.stream.Stream;
+
+public class NumbersFilter {
+	public static void main(String[] args) {
+		Stream<Integer> stream = Stream.of(4, 8, 12, 6, 7, 11, 24);
+		//stream.forEach(System.out::println);
+		//stream.filter(number -> number >= 6).forEach(System.out::println);
+		Stream<Integer> filteredStream = stream.filter(number -> number >= 6);
+		filteredStream.forEach(System.out::println);
+	}
+}
+
+Example 2: Names Filter
+-----------------------
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
+public class NamesFilter {
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<>();
+        list.add("Anushka");
+        list.add("Trisha");
+        list.add("Nayantara");
+        list.add("Pooja Hedge");
+        list.add("Anupama Parmeshwaram");
+        list.add("Amisha Patel");
+        
+        //Stream<String> stream = list.stream();
+        //stream.filter(name -> name.startsWith("A")).forEach(System.out::println);
+        list.stream().filter(name -> name.startsWith("A")).forEach(System.out::println);
+	}
+}
+
+Example 3: Persons Filter
+-------------------------
+package com.tushar.beans;
+
+public class Person {
+	
+	private String name;
+	
+	private Integer age;
+	
+	private String job;
+	
+	public Person() {
+		super();
+	}
+
+	public Person(String name, Integer age, String job) {
+		super();
+		this.name = name;
+		this.age = age;
+		this.job = job;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", age=" + age + ", job=" + job + "]";
+	}
+	
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+package com.tushar.beans;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class PersonsFilter {
+	public static void main(String[] args) {
+		Person p1 = new Person("Raju", 28, "Software");
+		Person p2 = new Person("Mahesh", 29, "Driver");
+		Person p3 = new Person("Ashok", 30, "Teacher");
+		Person p4 = new Person("Sunil", 27, "Mechanic");
+		Person p5 = new Person("Bharat", 30, "Chef");
+		
+		List<Person> persons = Arrays.asList(p1, p2, p3, p4, p5);
+		persons.stream().filter(person -> person.getAge() > 21 && person.getAge() < 30 && 	person.getJob().equals("Software")).forEach(System.out::println);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Use case for filtering data:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+public class Mobile {
+	public List<Mobiles> getMobiles(MobileFilter mf) {
+		List<Mobiles> mobiles = dao.getMobiles();
+		Stream<Mobiles> mobilesStream = null;
+		
+		if(!"".equals(mf.getBrand())) {
+			mobilesStream = mobiles.stream().filter(m -> m.getBrand().equals(mf.getBrand()));
+		}
+
+		if(!"".equals(mf.getRam())) {
+			mobilesStream = mobiles.stream().filter(m -> m.getRam().equals(mf.getRam()));
+		}
+		return mobilesStream.collect(Collectors.toList());
+	}
+}
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 Mapping Operations in Streams
@@ -1701,44 +2103,95 @@ Mapping Operations in Streams
 
 -> Mapping operations are those operations that transform the elements of a stream and return a new stream with transformed elements.
 
-Example:
+Example 1:
+----------
+package com.tushar.beans;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-public class StreamMapping {
-    public static void main(String[] args) {
-        
-        List<String> list = new ArrayList<>();
+public class NamesMapping {
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<>();
         list.add("Anushka");
         list.add("Trisha");
         list.add("Nayantara");
         list.add("Pooja Hedge");
         list.add("Anupama Parmeshwaram");
         list.add("Amisha Patel");
-
-        Stream<String> stream = list.stream();
-
-        stream.map(name -> name.toUpperCase()).forEach(System.out::println);
-    }
+        
+        list.stream().map(name -> name.toUpperCase()).forEach(System.out::println);
+	}
 }
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example 2:
+----------
+package com.tushar.beans;
 
--> In last session we discusses about below concepts
+import java.util.ArrayList;
+import java.util.List;
 
-I) What is Stream API?
-II) What are the advantages of using Stream API
-iii) Characteristics of Stream API
-iv) What type of operations we can perform using Stream API
-	- Intermediate Operations
-	- Terminal Operations
-v) Stream Creation
-	I) of() method
-	II) stream() method
+public class NamesLength {
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<>();
+        list.add("Anushka");
+        list.add("Trisha");
+        list.add("Nayantara");
+        list.add("Pooja Hedge");
+        list.add("Anupama Parmeshwaram");
+        list.add("Amisha Patel");
+        
+        list.stream().map(name -> name.toUpperCase() + " : " + name.length()).forEach(System.out::println);
+	}
+}
 
-vi) Filter operation using Streams -- filter(Predicate p)
-vii ) Mapping operation using Streams -- map(Function f)
+Example 3:
+----------
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class NamesLength {
+	public static void main(String[] args) {
+		List<String> list = new ArrayList<>();
+        list.add("Anushka");
+        list.add("Trisha");
+        list.add("Nayantara");
+        list.add("Pooja Hedge");
+        list.add("Anupama Parmeshwaram");
+        list.add("Amisha Patel");
+        
+        list.stream().map(name -> name.toUpperCase() + " : " + name.length()).forEach(System.out::println);
+        
+        //Map to Integer
+        list.stream().mapToInt(name -> name.length()).forEach(System.out::println);
+        
+        //Get names which starts with "A" and length of that names.
+        list.stream().filter(name -> name.startsWith("A")).map(name -> name.toUpperCase() + " : " + name.length()).forEach(System.out::println);
+     
+        //Here first data will transform and then it will filter so this is also gives same output but the issue is this will transform all the data then it will filter.
+        list.stream().map(name -> name.toUpperCase() + " : " + name.length()).filter(name -> name.startsWith("A")).forEach(System.out::println);
+	
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
