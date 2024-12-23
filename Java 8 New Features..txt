@@ -1054,6 +1054,9 @@ public class PersonNamesPrinter {
 		Person p3 = new Person("Anil", 16);
 		Person p4 = new Person("Gita", 24);
 		Person p5 = new Person("Suchitra", 26);
+
+
+
 		
 		List<Person> persons = Arrays.asList(p1, p2, p3, p4, p5);
 		
@@ -1947,7 +1950,7 @@ Intermediate Operations:
 	- Intermediate operations methods will not produce any results. They usually accept Functional interface as parameter and always returns new Stream.
 Example:
 --------
-	- filter() and map() methods.
+	- filter(), map(), distinct(), limit(), skip() etc.
 
 
 Terminal Operations:
@@ -1955,14 +1958,17 @@ Terminal Operations:
 	- Terminal operations methods will produce some results.
 Example:
 --------
-	- count(), collect(), distinct(), forEach() etc.
+	- count(), collect(), forEach(), anyMatch(), allMatch(), noneMatch() etc.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 Stream with Filtering:
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 -> Stream interface having filter() method.
--> filter() method will take Predicate as input.
+
+-> filter(Predicate interface) method will take Predicate interface as parameter.
+
 -> Predicate is a Functional interface which will take input and returns Boolean value.
+
 -> Predicate interface contains test() method which is abstract method. This method is used to execute Lambdas.
 
 Example 1: Numbers Filter
@@ -2103,6 +2109,8 @@ Mapping Operations in Streams
 
 -> Mapping operations are those operations that transform the elements of a stream and return a new stream with transformed elements.
 
+-> For Mapping operation there is map(Function interface) method which accepts Function interface as a parameter.
+
 Example 1:
 ----------
 package com.tushar.beans;
@@ -2154,7 +2162,7 @@ import java.util.List;
 
 public class NamesLength {
 	public static void main(String[] args) {
-		List<String> list = new ArrayList<>();
+	List<String> list = new ArrayList<>();
         list.add("Anushka");
         list.add("Trisha");
         list.add("Nayantara");
@@ -2176,22 +2184,592 @@ public class NamesLength {
 	}
 }
 
+Example 4: Flat Map concept
+---------------------------
+-> When we have Collection inside another Collection then to Flaten that Stream we will use flatMap() method.
 
+package com.tushar.beans;
 
+import java.util.Arrays;
+import java.util.List;
 
+public class FlatMapDemo {
+	public static void main(String[] args) {
+		List<String> javaCourses = Arrays.asList("Core Java", "Adv Java", "SBMS", "JRTP");
+		List<String> uiCourses = Arrays.asList("HTML", "CSS 3", "Angular", "React JS");
+		List<String> cloudCourses = Arrays.asList("DevOps", "AWS", "Azure", "GCP");
+		
+		List<List<String>> courses = Arrays.asList(javaCourses, uiCourses, cloudCourses);
+		courses.stream().flatMap(course -> course.stream()).forEach(System.out::println);
+	}
+}
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Stream API methods with examples: (Stream Slicing operations)
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> distinct()
+	- It is used to get unique elements from the Stream.
+-> limit(long maxSize)
+	- It is used to get number of elements from the stream based on given size.
+-> skip(long n)
+	- It is used to skip elements from starting to given length and returns remaining elements.
 
+Note: The above 3 methods are intermediate methods only. They perform operation and returns new stream.
 
+Example:
+--------
+package com.tushar.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 
+public class SlicingDemo {
+	public static void main(String[] args) {
+		List<String> countries = new ArrayList<String>();
+		countries.add("India");
+		countries.add("USA");
+		countries.add("UK");
+		countries.add("China");
+		countries.add("India");
+		countries.add("USA");
+		
+		//Use of unique to remove duplicates.
+		countries.stream().distinct().forEach(System.out::println);
+		
+		//Use of limit to show the selected records.
+		countries.stream().limit(3).forEach(System.out::println);
+		
+		//Use of skip the number of elements from starting and return remaining.
+		countries.stream().skip(4).forEach(System.out::println);
+	}
+}
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Matching operations in Streams:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Matching operations are terminal operations that are used to check if elements with certain are present in the Stream or not.
+-> There are mainly 3 matching functions in the Stream.
+	- anyMatch()
+		-> It matches the provided value if any one matches returns true otherwise returns false.
+		-> It is a Terminal operation.
+	- allMatch()
+		-> It matches the provided value if all matches returns true otherwise false.
+		-> It is a Terminal operation.
+	- noneMatch()
+		-> If the provided value matched then returns false otherwise true.
+		-> It is a Terminal operation.
 
+Example:
+--------
 
+package com.tushar.beans;
 
+public class Person {
+	
+	private String name;
+	
+	private Integer age;
+	
+	private String country;
 
+	public Person() {
+		super();
+	}
 
+	public Person(String name, Integer age, String country) {
+		super();
+		this.name = name;
+		this.age = age;
+		this.country = country;
+	}
 
+	public String getName() {
+		return name;
+	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
 
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	public String getcountry() {
+		return country;
+	}
+
+	public void setcountry(String country) {
+		this.country = country;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", age=" + age + ", country=" + country + "]";
+	}
+	
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MatchingDemo {
+	public static void main(String[] args) {
+		List<Person> persons = new ArrayList<Person>();
+		persons.add(new Person("David", 23, "India"));
+		persons.add(new Person("Joy", 25, "USA"));
+		persons.add(new Person("Ryan", 50, "Canada"));
+		persons.add(new Person("Ram", 45, "India"));
+		persons.add(new Person("Ching", 56, "China"));
+
+		//If any single record match it returns true otherwise false and it is a terminal operation.
+		boolean isIndiaPresentAnyMatch = persons.stream().anyMatch(person -> person.getcountry().equals("India"));
+		System.out.println(isIndiaPresentAnyMatch);
+		
+		//If all records matches then it returns true otherwise false and it is a terminal operation.
+		boolean isIndiaPresentAllMatch = persons.stream().allMatch(person -> person.getcountry().equals("India"));
+		System.out.println(isIndiaPresentAllMatch);
+		
+		//If no records matches then it returns true otherwise false and it is a terminal operation.
+		boolean isGermanyPresentAllMatch = persons.stream().noneMatch(person -> person.getcountry().equals("Germany"));
+		System.out.println(isGermanyPresentAllMatch);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Finding operations in Streams:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-> In matching operations we can check whether data is present in the stream or not based on given criteria. After checking the condition it returns true or 
+false.
+-> By using Finding operations we can check the condition and we get the data based on condition.
+-> Methods in Finding operation:
+	- findFirst()
+	- findAny()
+
+Example:
+--------
+
+package com.tushar.beans;
+
+public class Person {
+	
+	private String name;
+	
+	private Integer age;
+	
+	private String country;
+
+	public Person() {
+		super();
+	}
+
+	public Person(String name, Integer age, String country) {
+		super();
+		this.name = name;
+		this.age = age;
+		this.country = country;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	public String getcountry() {
+		return country;
+	}
+
+	public void setcountry(String country) {
+		this.country = country;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", age=" + age + ", country=" + country + "]";
+	}
+	
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class FindingDemo {
+	public static void main(String[] args) {
+		List<Person> persons = new ArrayList<Person>();
+		persons.add(new Person("David", 23, "India"));
+		persons.add(new Person("Joy", 25, "USA"));
+		persons.add(new Person("Ryan", 50, "Canada"));
+		persons.add(new Person("Ram", 45, "India"));
+		persons.add(new Person("Ching", 56, "China"));
+		
+		//It gives the first record from the multiple records and returns Optional as a return type because if it is null to handle null
+		//scenario.
+		Optional<Person> personFindFirst = persons.stream().findFirst();
+		if(personFindFirst.isPresent()) {
+			System.out.println(personFindFirst.get());
+		}
+		
+		//findFirst() with filter.
+		Optional<Person> personFindFirstWithFilter = persons.stream().filter(person -> person.getcountry().equals("India")).findFirst();
+		if(personFindFirstWithFilter.isPresent()) {
+			System.out.println(personFindFirstWithFilter.get());
+		}
+		
+		//It gives any record which is present in the list
+		Optional<Person> personFindAny = persons.stream().findAny();
+		if(personFindAny.isPresent()) {
+			System.out.println(personFindAny.get());
+		}
+		
+		//It gives any record which is present in the filtered list
+		Optional<Person> personFindAnyWithFilter = persons.stream().filter(person -> person.getcountry().equals("India")).findAny();
+		if(personFindAnyWithFilter.isPresent()) {
+			System.out.println(personFindAnyWithFilter.get());
+		}
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Collectors in Streams:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Collectors operation are used to collect the data from Streams.
+-> We are having below methods to perform Collectors operation.
+	- Collectors.toList()
+	- Collectors.toSet()
+	- Collectors.toMap()
+	- Collectors.toCollection() ... etc
+
+Example: For Collectors.toList()
+--------------------------------
+package com.tushar.beans;
+
+public class Employee {
+	
+	private String name;
+	
+	private int age;
+	
+	private int salary;
+	
+	public Employee() {
+		super();
+	}
+
+	public Employee(String name, int age, int salary) {
+		super();
+		this.name = name;
+		this.age = age;
+		this.salary = salary;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public int getSalary() {
+		return salary;
+	}
+
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [name=" + name + ", age=" + age + ", salary=" + salary + "]";
+	}
+	
+}
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CollectorsDemo {
+	public static void main(String[] args) {
+		List<Employee> employees = new ArrayList<Employee>();
+		employees.add(new Employee("Ram", 23, 20000));
+		employees.add(new Employee("Ashok", 25, 30000));
+		employees.add(new Employee("Suresh", 33, 25000));
+		employees.add(new Employee("Charan", 26, 40000));
+		
+		//If you want to convert the result of map into the other List of names we can do it using Collectors
+		List<String> employeeNames = employees.stream().map(employee -> employee.getName()).collect(Collectors.toList());
+	}
+}
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Example: For Collectors.toMap()
+--------------------------------
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class CollectorsToMapDemo {
+	public static void main(String[] args) {
+		 List<String> cricketPlayerNames = new ArrayList<String>();
+		 cricketPlayerNames.add("Rahul");
+		 cricketPlayerNames.add("Sachin");
+		 cricketPlayerNames.add("Hardik");
+		 cricketPlayerNames.add("Dhoni");
+		 
+		 Map<String, Integer> namesMap = cricketPlayerNames.stream()
+		                   .collect(Collectors.toMap(cricketPlayerName -> cricketPlayerName, cricketPlayerName -> cricketPlayerName.length()));
+		 System.out.println(namesMap);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Streams API Methods:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Getting minimum salary employee from collection.
+-> Getting maximum salary employee from collection.
+-> Getting average salary of the employee.
+-> Group by operation.
+
+Example 1:
+----------
+
+package com.tushar.beans;
+
+public class Employee {
+	
+	private String name;
+	
+	private int age;
+	
+	private int salary;
+	
+	public Employee() {
+		super();
+	}
+
+	public Employee(String name, int age, int salary) {
+		super();
+		this.name = name;
+		this.age = age;
+		this.salary = salary;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public int getSalary() {
+		return salary;
+	}
+
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [name=" + name + ", age=" + age + ", salary=" + salary + "]";
+	}
+	
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class MiscellaneousDemo {
+	public static void main(String[] args) {
+		List<Employee> employees = new ArrayList<Employee>();
+		employees.add(new Employee("Ram", 23, 20000));
+		employees.add(new Employee("Ashok", 25, 30000));
+		employees.add(new Employee("Suresh", 33, 25000));
+		employees.add(new Employee("Charan", 26, 40000));
+		employees.add(new Employee("Laxman", 23, 20000));
+	
+		Double employeesAverageSalary = employees.stream().collect(Collectors.averagingInt(employee -> employee.getSalary()));
+		System.out.println("Employee average salary: " + employeesAverageSalary);
+
+		Optional<Employee> minimumEmployeeSalary = employees.stream().collect(Collectors.minBy(Comparator.comparing(Employee::getSalary)));
+		System.out.println("Minimum Salary: " + minimumEmployeeSalary.get());
+		
+		Optional<Employee> maximumEmployeeSalary = employees.stream().collect(Collectors.maxBy(Comparator.comparing(Employee::getSalary)));
+		System.out.println("Maximum Salary: " + maximumEmployeeSalary.get());
+		
+		Map<Integer, List<Employee>> groupingEmployeesBySalary = employees.stream().collect(Collectors.groupingBy(employee -> employee.getSalary()));
+		System.out.println("Grouping Employees by Salary: " + groupingEmployeesBySalary);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Example 2: For Group by
+-----------------------
+package com.tushar.beans;
+
+public class User {
+
+	private String name;
+	
+	private int salary;
+	
+	private String country;
+
+	public User() {
+		super();
+	}
+
+	public User(String name, int salary, String country) {
+		super();
+		this.name = name;
+		this.salary = salary;
+		this.country = country;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getSalary() {
+		return salary;
+	}
+
+	public void setSalary(int salary) {
+		this.salary = salary;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	@Override
+	public String toString() {
+		return "User [name=" + name + ", salary=" + salary + ", country=" + country + "]";
+	}
+	
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+package com.tushar.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class GroupByDemo {
+	public static void main(String[] args) {
+		List<User> users = new ArrayList<User>();
+		users.add(new User("Ram", 10000, "India"));
+		users.add(new User("Anil", 20000, "Canada"));
+		users.add(new User("Sunil", 30000, "India"));
+		users.add(new User("Orlen", 40000, "Japan"));
+		users.add(new User("Cathie", 50000, "UK"));
+		users.add(new User("Ching Chong", 10000, "China"));
+		
+		Map<String, List<User>> usersGroupingByCountry = users.stream().collect(Collectors.groupingBy(User::getCountry));
+		System.out.println(usersGroupingByCountry);
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Parallel Streams:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Streams are one of the major change added in Java 1.8v.
+-> Generally Streams will execute in sequential manner.
+-> We can use Parallel Streams also to execute program in faster way by utilising system resources efficiently.
+-> Parallel Streams introduced to improve performance of the program. But going with Parallel Stream is not always a good choice.
+
+Example:
+--------
+package com.tushar.beans;
+
+import java.util.stream.Stream;
+
+public class ParallelStreamDemo {
+	public static void main(String[] args) {
+		System.out.println("=====Serial Streaming=====");
+		Stream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+			  .forEach(number -> System.out.println(number + " : " + Thread.currentThread().getName()));
+		System.out.println("=====Parallel Streaming=====");
+		Stream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+		      .parallel().forEach(number -> System.out.println(number + " : " + Thread.currentThread().getName()));
+	}
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+Date API changes:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> In Java we have java.util.Date class to work with Date in our application.
+	- Date date = new Date(); //It will give current date and time.
+-> When we create object for Date class it will give both date and time(current date and time).
+-> If we want to get only date or then we have to write our own logic using Date class object.
 
 

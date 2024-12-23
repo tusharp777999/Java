@@ -11,10 +11,5 @@ public class FlatMapDemo {
 		
 		List<List<String>> courses = Arrays.asList(javaCourses, uiCourses, cloudCourses);
 		courses.stream().flatMap(course -> course.stream()).forEach(System.out::println);
-		
-		List<Object> coursesList = Arrays.asList(javaCourses, uiCourses, cloudCourses);
-		coursesList.add("Hello");
-		
-		coursesList.stream().flat
 	}
 }
