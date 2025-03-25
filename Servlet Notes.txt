@@ -571,8 +571,104 @@ Example:
 	
 Note: The first 2 steps only happens one time only.
 
+-> How HttpServletRequest and HttpServletResponse Are Created and Managed in Java Web Applications?
+	-> Both HttpServletRequest and HttpServletResponse are part of the Java Servlet API and are managed by the Servlet container (e.g., Tomcat, Jetty, 	WildFly). These objects are created and initialized by the servlet container when a client (such as a web browser or API client) sends an HTTP 	request to a web server.
+
+-> The Servlet container (Tomcat, Jetty, etc.) creates and initializes these objects.
+-> When a client sends an HTTP request to the server, the servlet container:
+-> Parses the incoming HTTP request.
+-> Creates an HttpServletRequest object containing details of the request.
+-> Creates an HttpServletResponse object to be used for sending a response.
+-> Passes both objects to the corresponding servlet or controller method.
+
+Step 1: Request Handling
+	-> When a request is received, the servlet container:
+		- Reads the request headers, body, and parameters.
+		- Creates an instance of HttpServletRequest.
+		- Maps the request to the appropriate servlet or Spring controller.
+		- Calls the servlet method (e.g., doGet(), doPost()) or the Spring controller method.
+
+Step 2: Response Handling
+	-> The servlet or controller processes the request and writes the response.
+	-> The servlet container:
+		- Creates an instance of HttpServletResponse.
+		- Collects data like response headers, cookies, and content.
+		- Writes the response data and sends it back to the client.
+
+
+Information Contained in HttpServletRequest:
+--------------------------------------------
+The HttpServletRequest object contains all the details of an incoming HTTP request. Below is a breakdown of the key information it provides:
+
+-> Request Line Information:
+	- request.getMethod() : Returns the HTTP method (GET, POST, PUT, DELETE, etc.).
+	- request.getRequestURI() : Returns the requested resource path (e.g., `/api/users`).
+	- request.getProtocol() : Returns the HTTP version (e.g., `HTTP/1.1`).
+
+-> Headers:
+	- request.getHeader("User-Agent") : Retrieves browser/client details.
+	- request.getHeader("Authorization") : Retrieves the authentication token.
+	- request.getHeaderNames() : Retrieves all request headers.
+
+-> Query Parameters & Form Data
+	- request.getParameter("username") : Retrieves a query/form parameter.
+	- request.getParameterMap() : Retrieves all parameters as a map.
+
+-> Request Body (For POST, PUT Requests)
+	- request.getInputStream() : Reads the raw request body (e.g., JSON, XML data).
+	- request.getReader() : Reads the request body as text.
+
+-> Session and Cookies
+	- request.getSession() : Retrieves the user session.
+	- request.getCookies() : Retrieves cookies associated with the request.
+
+-> Client Information
+	- request.getRemoteAddr() : Retrieves the client's IP address.
+	- request.getRemotePort() : Retrieves the client's port number.
+	- request.getLocale() : Retrieves the client's preferred language.
+
+-> URL & Context Information
+	- request.getContextPath() : Retrieves the application context path.
+	- request.getServletPath() : Retrieves the specific servlet path within the application.
+
+
+Information contain in HttpServletResponse:
+-------------------------------------------
+The HttpServletResponse object is used to send the HTTP response back to the client.
+
+-> Response Status and Headers
+	- response.setStatus(HttpServletResponse.SC_OK) : Sets response status.
+	- response.setHeader("Content-Type", "application/json") : Sets headers.
+-> Response Body
+	- response.getWriter().write("Hello, World!") : Writes text response.
+	- response.getOutputStream() : Writes binary data.
+-> Cookies & Redirects
+	- response.addCookie(new Cookie("token", "abc123")) : Adds a cookie.
+	- response.sendRedirect("/login") : Redirects to another page.
+
 9. Form Submission 
--------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------> During the form submission the form have attributes like name(Name for the form), method(Which type of request you want like GET, POST etc here the GET is default if you don't mention this attribute), action(to whom it should call using this you can mention)
+
+-> All enctype Values in HTML Forms
+	-> The enctype attribute in HTML <form> specifies how form data should be encoded before sending it to the server. Below are all possible values:
+
+	-> application/x-www-form-urlencoded (Default):
+		- Encodes form data as key-value pairs.
+		- Spaces are converted to +, and special characters are percent-encoded.
+		- Suitable for simple form submissions (text fields, radio buttons, checkboxes).
+
+	-> multipart/form-data:
+		- Used when a form contains file uploads (<input type="file">).
+		- Encodes data as a separate part for each field, including binary file data.
+		- Required when sending files.
+
+	-> text/plain:
+		- Sends data as plain text without encoding special characters.
+		- Not commonly used as it does not handle special characters properly.
+
+What is a Client-Side Agent?
+----------------------------
+	- A client-side agent refers to any software or script that runs on the client’s device (such as a browser, mobile app, or desktop application) and interacts with a server. It acts as an intermediary between the user and the server, sending requests and processing responses.
 
 10. RequestDispatcher: forward() and include() method
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
