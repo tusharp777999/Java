@@ -1,0 +1,783 @@
+1. Servlet/JSP Overview 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> What is a web application?  
+   ➤ A website where the HTML pages are generated dynamically based on user action  
+
+-> What are Servlet and JSP?  
+   ➤ Servlet and JSP are server-side technologies written in Java and run on the server to generate dynamic web pages.  
+
+-> What types of apps can we create by using Servlet and JSP?  
+   We can develop many types of apps such as:  
+   ➤ E-Commerce Apps  
+   ➤ Banking Apps etc.
+   
+2. Servlet/JSP Flow:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------   
+Client (web browser)  -->  Request  -->  Server (Tomcat)  -->  Request  -->  DB
+Client (web browser)  <--  HTML page  <--  Server (Tomcat)  <--  Response  <--  DB
+
+-> The client sends an HTTP request to the web server.
+-> The web server module that supports Jakarta Servlet-based web components is called a servlet container.
+-> The servlet container converts the HTTP request into an HttpServletRequest object and prepares the HttpServletResponse object.
+-> These objects are delivered to a web component, which can interact with beans or a database to generate dynamic content.
+-> The web component can fill the HttpServletResponse object with the generated dynamic content or can pass the object to another web component to fill it.
+-> The servlet container ultimately converts the HttpServletResponse object to an HTTP response and the web server returns it to the client.
+
+
+Note: The java package has changed from javax.servlet to jakarta.servlet.
+
+3. First Servlet Application:
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+How to create project:
+-----------------------
+Goto: File -> New -> New Maven Project -> Click on Next -> In Filter type web (Uncheck the option: Show the last version of Archetype only)
+-> select the Filtered option i.e. org.apache.maven.archetypes maven-archetype-webapp 1.0 -> Click on Next -> Enter the details like Group Id, Artifact Id, Version, Package etc.. -> Click on Finish.
+
+Folder Structure of a Application:
+----------------------------------
+1. FirstServlet [Java Servlet]
+├── src
+│   ├── main
+│   │   ├── java
+│   │   ├── resources
+│   │   ├── webapp
+│   │   │   ├── WEB-INF
+│   │   │   │   ├── web.xml
+│   │   │   ├── index.jsp
+├── target
+├── pom.xml
+
+Here web.xml is called as Deployment descriptor which contains the following detail like 
+
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+</web-app>
+
+We need to replace this with the following details like
+
+Goto: Apache Tomcat Folder -> Open conf Folder -> Open web.xml file and copy the <web-app> tag line and paste it in the Your projects web.xml <web-app> tag.
+
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+	version="6.0">
+
+Note: If you are getting the issues like [Downloading external resources is disabled. [DownloadResourceDisabled]] for [https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd] this URL then do the following settings in your IDE.
+	If you are using Eclipse :
+	Go to top bar : Window -> Preference -> Maven -> tick the option ('download artifact javadoc').
+
+Once we deployed the Servlet application on server it searches the web.xml file and it will pick what is Servlet name and URL and accordingly it will take the request.
+
+4. Servlet Basics
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> What is Servlet?
+	-> Servlet is an interface.
+	-> Servlet is in jakarta.servlet package.
+	-> A Servlet is a small Java program that runs within a Web server. Servlets receive and respond to requests from Web clients, usually across HTTP, the HyperText Transfer Protocol or Servlet is a Server-side technology which is used to handle the client request, process the request and generate the dynamic response.
+	-> To implement this interface, you can write a generic servlet that extends jakarta.servlet.GenericServlet or an HTTP servlet that extends jakarta.servlet.http.HttpServlet.
+	-> This interface defines methods to initialize a servlet, to service requests, and to remove a servlet from the server.
+	-> These are known as life-cycle methods and are called in the following sequence:
+		- The servlet is constructed, then initialized with the init method.
+ 		- Any calls from clients to the service method are handled.
+ 		- The servlet is taken out of service, then destroyed with the destroy method, then garbage collected and finalized.
+		- In addition to the life-cycle methods, this interface provides the getServletConfig method, which the servlet can use to get any startup 		information, and the getServletInfo method, which allows the servlet to return basic information about itself, such as author, version, and copyright.
+		
+-> Servlet interface methods:
+-----------------------------
+	-> void init(ServletConfig config) throws ServletException;
+	-----------------------------------------------------------
+		- Called by the servlet container to indicate to a servlet that the servlet is being placed into service.
+		- The servlet container calls the init method exactly once after instantiating the servlet. The init method must complete successfully before the servlet can receive any requests. The container will ensure that actions performed in the init method will be visible to any threads that subsequently call the service method according to the rules in JSR-133 (i.e. there is a 'happens before' relationship between init and service).
+		- The servlet container cannot place the servlet into service if the init method Throws a ServletException Does not return within a time period defined by the Web server.
+		- config a ServletConfig object containing the servlet's configuration and initialization parameters.
+     		- exception ServletException if an exception has occurred that interferes with the servlet's normal operation.
+   
+	-> ServletConfig getServletConfig();
+	------------------------------------
+		- Returns a ServletConfig object, which contains initialization and startup parameters for this servlet. The ServletConfig object returned is the one passed to the init method.
+		- Implementations of this interface are responsible for storing the ServletConfig object so that this method can return it. The GenericServlet class, which implements this interface, already does this.
+		- return the ServletConfig object that initializes this servlet.
+	
+	-> void service(ServletRequest req, ServletResponse res) throws ServletException, IOException;
+	----------------------------------------------------------------------------------------------
+		- Called by the servlet container to allow the servlet to respond to a request.
+		- This method is only called after the servlet's init() method has completed successfully.
+		- The status code of the response always should be set for a servlet that throws or sends an error.
+		- Servlets typically run inside multithreaded servlet containers that can handle multiple requests concurrently.
+	Note: Developers must be aware to synchronize access to any shared resources such as files, network connections, and as well as the servlet's class and instance variables.
+		- req the ServletRequest object that contains the client's request.
+     		- res the ServletResponse object that contains the servlet's response.
+		- ServletException if an exception occurs that interferes with the servlet's normal operation.
+ 		- IOException if an input or output exception occurs.
+
+	-> String getServletInfo();
+	---------------------------
+		- Returns information about the servlet, such as author, version, and copyright.
+		- The string that this method returns should be plain text and not markup of any kind (such as HTML, XML, etc.).
+     		- return a String containing servlet information.
+     	
+     	-> void destroy();
+	------------------
+		- Called by the servlet container to indicate to a servlet that the servlet is being taken out of service. 
+		- This methodis only called once all threads within the servlet's service method have exited or after a timeout period has passed.
+		- After the servlet container calls this method, it will not call the service method again on this servlet.
+		- This method gives the servlet an opportunity to clean up any resources that are being held (for example, memory, file handles, threads) and make sure that any persistent state is synchronized with the servlet's current state in memory.
+		
+Steps to run:
+-------------
+-> If your project is Dynamic Web Project you will get the option of Run on server.
+-> But your project is of type maven-archetype-web-app-1.0 then Right click on project -> Click on Properties -> Click on Project Facets -> Check on Dynamic Web Module and version is 6.0 (As per Servlet version) and select Java and its version according to the JDK then you can Right click on the project and you will see the option of Run on server.
+
+Open the browser and paste the link as http://localhost:8080/1.FirstServlet/
+Here the link contains information like localhost which runs on the port 8080 and the project name.
+     		
+5. Servers:
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> There are 2 types of servers:
+--------------------------------
+-> Web Servers: Apache Tomcat Server, Glassfish, Jetty etc...
+-> Application Servers: JBoss, WebLogic, IBM WebSphere etc... 
+	
+-> Servers contains many types of containers:
+---------------------------------------------
+- Servlet Container.
+- JSP Container.
+- Security Container.
+- WebSocket Container.
+- JNDI Container.
+     		
+5. Servlet Interface with example
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> When to Use Servlet Interface:
+	-> If you want full control over the servlet lifecycle.
+	-> If you're implementing a non-HTTP servlet from scratch.
+-> Downside:
+	-> You must implement all five methods, even if some are unnecessary.
+
+package com.tushar;
+
+import java.io.IOException;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+
+public class FirstServlet implements Servlet{
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ServletConfig getServletConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("I am in service");
+		
+	}
+
+	@Override
+	public String getServletInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void destroy() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
+
+web.xml:
+--------
+
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+	version="6.0">
+	<display-name>Archetype Created Web Application</display-name>
+
+	<servlet>
+		<servlet-name>myservlet</servlet-name>
+		<servlet-class>com.tushar.FirstServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>myservlet</servlet-name>
+		<url-pattern>/firstServlet</url-pattern>
+	</servlet-mapping>
+</web-app>
+
+pom.xml:
+--------
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.tushar</groupId>
+	<artifactId>1.FirstServlet</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>1.FirstServlet Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>1.FirstServlet</finalName>
+	</build>
+</project>
+
+index.jsp:
+----------
+<html>
+<body>
+	<h2>Hello World!</h2>
+	<!-- <a href="firstServlet"> click me </a> -->
+</body>
+</html>
+
+
+6. GenericServlet with example 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> What is GenericServlet?
+	- Its a abstract class which implements the Servlet interface below is the class definition.
+	- public abstract class GenericServlet implements Servlet, ServletConfig, java.io.Serializable
+	- When we implements the Servlet interface we need to override all the methods present in it but that's not case in GenericServlet it implements the Servlet and except service() method it provides the dummy or empty implementation (public abstract void service(ServletRequest req, ServletResponse res) throws ServletException, IOException;) So when we implement GenericServlet we don't want to take all the methods which we don't required.
+	- GenericServlet implements the Servlet and ServletConfig interfaces.
+ 	- GenericServlet may be directly extended by a servlet, although it's more common to extend a protocol-specific subclass such as HttpServlet.
+ 	- GenericServlet makes writing servlets easier. It provides simple versions of the lifecycle methods init and destroy and of the methods in the ServletConfig interface.
+ 	- GenericServlet also implements the <code>log</code> method, declared in the ServletContext interface.
+
+-> The GenericServlet class is an abstract class that implements the Servlet interface but provides default implementations for some methods.
+
+-> When to Use:
+	-> When working with non-HTTP protocols (e.g., FTP, SMTP).
+	-> When you don't need the HTTP-specific methods of HttpServlet.
+    	-> When creating a custom protocol-based servlet.
+-> Advantages:
+	-> No need to implement all Servlet interface methods.
+    	-> Only requires overriding the service() method.
+-> Downside:
+	-> Doesn't support HTTP-specific methods like doGet() and doPost().
+    	-> For HTTP-based servlets, HttpServlet is preferred.
+
+Example:
+package com.tushar;
+
+import java.io.IOException;
+
+import jakarta.servlet.GenericServlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+
+public class SecondServlet extends GenericServlet{
+
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("I am in second servlet.");
+	}
+
+}
+
+web.xml:
+--------
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+	version="6.0">
+	<display-name>Archetype Created Web Application</display-name>
+
+	<servlet>
+		<servlet-name>second-servlet</servlet-name>
+		<servlet-class>com.tushar.SecondServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>second-servlet</servlet-name>
+		<url-pattern>/secondServlet</url-pattern>
+	</servlet-mapping>
+</web-app>
+
+
+pom.xml:
+--------
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.tushar</groupId>
+	<artifactId>2.SecondServlet</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>2.SecondServlet Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>2.SecondServlet</finalName>
+	</build>
+</project>
+
+index.jsp
+---------
+<html>
+<body>
+	<h2>Hello World!</h2>
+	<a href="secondServlet">Click Me</a>
+</body>
+</html>
+
+7. HttpServlet with example 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+What is HttpServlet?
+--------------------
+-> Provides an abstract class to be subclassed to create an HTTP servlet suitable for a Web site. A subclass of HttpServlet must override at least one method, usually one of these:
+	- doGet, if the servlet supports HTTP GET requests
+	- doPost, for HTTP POST requests
+	- doPut, for HTTP PUT requests
+	- doDelete, for HTTP DELETE requests
+	- init and destroy, to manage resources that are held for the life of the servlet
+	- getServletInfo, which the servlet uses to provide information about itself
+-> There's almost no reason to override the service method. service handles standard HTTP requests by dispatching them to the handler methods for each HTTP request type (the doXXX methods isted above).
+-> Likewise, there's almost no reason to override the doOptions and doTrace methods.
+-> Servlets typically run on multithreaded servers, so be aware that a servlet must handle concurrent requests and be careful to synchronize access to shared resources. Shared resources include in-memory data such as instance or class variables and external objects such as files, database connections, and network connections. See the "https://docs.oracle.com/javase/tutorial/essential/concurrency/" Java Tutorial on Multithreaded Programming for more information on handling multiple threads in a Java program.
+
+-> To make a service() method protocol specific the HttpServlet overrides the service() method from the GenericServlet abstract class. In the form of doXXX() methods.
+
+When to use:
+------------
+-> HttpServlet extends GenericServlet and specializes in handling HTTP requests.
+-> It provides built-in methods for GET, POST, PUT, DELETE, etc.
+
+Example:
+--------
+package com.tushar;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class ThirdServlet extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		System.out.println("I am inside doGet()");
+		resp.setContentType("text/html");
+		PrintWriter printWriter = resp.getWriter();
+		printWriter.println("<html><body>");
+		printWriter.println("Hello servlets");
+		printWriter.println("</body></html>");
+	}
+
+}
+
+web.xml:
+--------
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+	version="6.0">
+  <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>third-servlet</servlet-name>
+  	<servlet-class>com.tushar.ThirdServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>third-servlet</servlet-name>
+  	<url-pattern>/thirdServlet</url-pattern>
+  </servlet-mapping>
+</web-app>
+
+pom.xml:
+--------
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.tushar</groupId>
+	<artifactId>3.ThirdServlet</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>3.ThirdServlet Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>3.ThirdServlet</finalName>
+	</build>
+</project>
+
+index.jsp:
+----------
+<html>
+<body>
+	<h2>Hello World!</h2>
+	<a href="thirdServlet">Click me</a>
+</body>
+</html>
+
+
+8. Servlet Internal Working:
+------------------------------------------------------------------------------------------------------------------------------------------------------------
++---------------------+
+|   Web Browser      |
+| (Client Request)   |
++---------+---------+
+          |
+          | HTTP Request
+          V   
+Server
++-------------------------------+
+|    +----------------------+   |
+|    |  Servlet Container  |    |
+|    | (e.g., Tomcat)      |    |
+|    +---------+-----------+    |
++-------------------------------+          
+          | Maps Request to Servlet
+ 	  |	
+ 	  v
++----------------------+
+|     Project WAR     |
+|  (Deployed App)     |
+|----------------------|
+|  web.xml (Config)   |
+|----------------------|
+|  Servlets (Java)    |
+|  - FirstServlet     |
+|----------------------|
+|  JSP / HTML Pages   |
++----------------------+
+          |
+          | Servlet Processing
+          v
++--------------------------+
+|  HttpServletRequest      |
+|  - URL                  |
+|  - Headers              |
+|  - Parameters           |
++--------------------------+
+          |
+          | Servlet Generates Response
+          v
++--------------------------+
+|  HttpServletResponse     |
+|  - HTML Output           |
+|  - JSON Response         |
+|  - Redirects, etc.       |
++--------------------------+
+          |
+          | HTTP Response
+          v
++----------------------+
+|   Web Browser       |
+| (Client Gets Page)  |
++----------------------+
+
+-> We can create a Servlet using 3 ways
+	- Implementing a Servlet interface. It contains all the methods of Servlet life cycle.
+	- Extending a abstract Generic Servlet class. It contains all the overridden Servlet interface methods. 
+	- Extending a abstract HttpServlet class. It contains only Service method.
+
+-> Now we have our own Servlet class named as FirstServlet which extends the HttpServlet class and we have doGet() overridden method in it.
+-> We mapped our Servlet using web.xml file.
+-> Deploy the application on the Tomcat server. Which also have the mapping file(web.xml) also called as deployment descriptor.
+-> From browser request goes to the server (Tomcat server.).
+-> Server creates the object for the Servlet class for which the request has been made.(In our example the FirstServlet class object will be created by the Tomcat server).
+-> After creating the object for FirstServlet class the Server will create the object for ServletConfig and in that it will put the all Servlet specific initialization parameter.
+-> After creating the ServletConfig object server will call the init() method (Which is one of the servlet life cycle method). and also pass the ServletConfig object in the init() method parameter which is already created before calling the init() method.
+-> But our class which is FirstServlet don't have the init() method only doGet() method is there so we know we extended the HttpServlet class but in that class we only have a service() method and http protocol methods but again we know the HttpServlet extends the GenericServlet which contains the init() method, that init() method will get called and initialization will be done.
+-> Now what server will do it will take the object of our class which is FirstServlet and on that object it will call the service() method. The service(parameter1, parameter2) method needs 2 parameters which is of type HttpServletRequest and HttpServletResponse. With the help of HttpServletRequest object we can able to fetch the data which is coming from client/user/end user and using HttpServletResponse we can able to generate any response. But the service method is called on the FirstServlet class object which don't have service() method. So how it is calling then, So we know our class which is FirstServlet is extending the HttpServlet abstract class which contains the service() method in it and within that service() method there is other methods called which are doXXX() methods so from that whatever methods our servlet has i.e FirstServlet class has currently we had only doGet() as an example that will be get called.
+
+What is deployment descriptor(web.xml):
+---------------------------------------
+-> It is a file which contains configuration of your java web application.
+-> You need to create this file only in WEB-INF, not anywhere in the project.
+-> Its first tag is <web-app> and do all things inside this tag.
+-> In this we can configure the things like servlet declaration, servlet-mapping, initialization parameter, welcome file configuration, filter, listener, seesion config etc.
+-> By default, servlets are loaded lazily, meaning they are only initialized when the first request for them is received. However, if you want a servlet to be initialized at application startup, you can specify <load-on-startup> with a positive integer value.
+
+Example:
+-------
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+	version="6.0">
+  <display-name>Archetype Created Web Application</display-name>
+  <servlet-mapping>
+  	<servlet-name>fourth-servlet</servlet-name>
+  	<url-pattern>/fourthServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  	<servlet-name>fourth-servlet</servlet-name>
+  	<servlet-class>com.tushar.FourthServlet</servlet-class>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+</web-app>
+
+9. Servlet Lifecycle 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+-> Loading and instantiation:
+	- When server is started, servlet class(FirstServlet.java) is loaded in the menory and servlet object will be created.
+-> Initialization: 
+	- Servlet object will be initialized by invoking the init() method.
+-> Request handling:
+	- It will handle or serve the client request, In this phase service() method will be invoked.
+	(For every request a new thread will be created)
+-> Destroy:
+	- When the server is shutdown, destory() method will be executed and servlet object well be deleted.
+	
+Note: The first 2 steps only happens one time only.
+
+-> How HttpServletRequest and HttpServletResponse Are Created and Managed in Java Web Applications?
+	-> Both HttpServletRequest and HttpServletResponse are part of the Java Servlet API and are managed by the Servlet container (e.g., Tomcat, Jetty, 	WildFly). These objects are created and initialized by the servlet container when a client (such as a web browser or API client) sends an HTTP 	request to a web server.
+
+-> The Servlet container (Tomcat, Jetty, etc.) creates and initializes these objects.
+-> When a client sends an HTTP request to the server, the servlet container:
+-> Parses the incoming HTTP request.
+-> Creates an HttpServletRequest object containing details of the request.
+-> Creates an HttpServletResponse object to be used for sending a response.
+-> Passes both objects to the corresponding servlet or controller method.
+
+Step 1: Request Handling
+	-> When a request is received, the servlet container:
+		- Reads the request headers, body, and parameters.
+		- Creates an instance of HttpServletRequest.
+		- Maps the request to the appropriate servlet or Spring controller.
+		- Calls the servlet method (e.g., doGet(), doPost()) or the Spring controller method.
+
+Step 2: Response Handling
+	-> The servlet or controller processes the request and writes the response.
+	-> The servlet container:
+		- Creates an instance of HttpServletResponse.
+		- Collects data like response headers, cookies, and content.
+		- Writes the response data and sends it back to the client.
+
+
+Information Contained in HttpServletRequest:
+--------------------------------------------
+The HttpServletRequest object contains all the details of an incoming HTTP request. Below is a breakdown of the key information it provides:
+
+-> Request Line Information:
+	- request.getMethod() : Returns the HTTP method (GET, POST, PUT, DELETE, etc.).
+	- request.getRequestURI() : Returns the requested resource path (e.g., `/api/users`).
+	- request.getProtocol() : Returns the HTTP version (e.g., `HTTP/1.1`).
+
+-> Headers:
+	- request.getHeader("User-Agent") : Retrieves browser/client details.
+	- request.getHeader("Authorization") : Retrieves the authentication token.
+	- request.getHeaderNames() : Retrieves all request headers.
+
+-> Query Parameters & Form Data
+	- request.getParameter("username") : Retrieves a query/form parameter.
+	- request.getParameterMap() : Retrieves all parameters as a map.
+
+-> Request Body (For POST, PUT Requests)
+	- request.getInputStream() : Reads the raw request body (e.g., JSON, XML data).
+	- request.getReader() : Reads the request body as text.
+
+-> Session and Cookies
+	- request.getSession() : Retrieves the user session.
+	- request.getCookies() : Retrieves cookies associated with the request.
+
+-> Client Information
+	- request.getRemoteAddr() : Retrieves the client's IP address.
+	- request.getRemotePort() : Retrieves the client's port number.
+	- request.getLocale() : Retrieves the client's preferred language.
+
+-> URL & Context Information
+	- request.getContextPath() : Retrieves the application context path.
+	- request.getServletPath() : Retrieves the specific servlet path within the application.
+
+
+Information contain in HttpServletResponse:
+-------------------------------------------
+The HttpServletResponse object is used to send the HTTP response back to the client.
+
+-> Response Status and Headers
+	- response.setStatus(HttpServletResponse.SC_OK) : Sets response status.
+	- response.setHeader("Content-Type", "application/json") : Sets headers.
+-> Response Body
+	- response.getWriter().write("Hello, World!") : Writes text response.
+	- response.getOutputStream() : Writes binary data.
+-> Cookies & Redirects
+	- response.addCookie(new Cookie("token", "abc123")) : Adds a cookie.
+	- response.sendRedirect("/login") : Redirects to another page.
+
+9. Form Submission 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------> During the form submission the form have attributes like name(Name for the form), method(Which type of request you want like GET, POST etc here the GET is default if you don't mention this attribute), action(to whom it should call using this you can mention)
+
+-> All enctype Values in HTML Forms
+	-> The enctype attribute in HTML <form> specifies how form data should be encoded before sending it to the server. Below are all possible values:
+
+	-> application/x-www-form-urlencoded (Default):
+		- Encodes form data as key-value pairs.
+		- Spaces are converted to +, and special characters are percent-encoded.
+		- Suitable for simple form submissions (text fields, radio buttons, checkboxes).
+
+	-> multipart/form-data:
+		- Used when a form contains file uploads (<input type="file">).
+		- Encodes data as a separate part for each field, including binary file data.
+		- Required when sending files.
+
+	-> text/plain:
+		- Sends data as plain text without encoding special characters.
+		- Not commonly used as it does not handle special characters properly.
+
+What is a Client-Side Agent?
+----------------------------
+	- A client-side agent refers to any software or script that runs on the client’s device (such as a browser, mobile app, or desktop application) and interacts with a server. It acts as an intermediary between the user and the server, sending requests and processing responses.
+
+10. RequestDispatcher: forward() and include() method
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+forward():
+----------
+- forward() is available from RequestDispacther.
+- forward() method can forward the control to the next resource the next resource could be servlet program or JSP program page or HTML file.
+
+                +------------------+
+                |   Web Browser     |
+                +------------------+
+                        |
+                        | request
+                        v
+                +------------------+
+                |  Servlet Program1 |
+                |    LoginServlet   |
+                +------------------+
+                        |
+                        | forward(-,-)
+                        v
+                +------------------+
+                |  Servlet Program2 |
+                |  DisplayServlet   |
+                +------------------+
+                        |
+                        | response
+                        v
+                +------------------+
+                |   Web Browser     |
+                |  (Final Response) |
+                +------------------+
+
+
+include():
+----------
+- include() is available from RequestDispacther.
+- include() method is including the response of next resource the next resource could be servlet program or JSP program page or HTML file and gives the final response to the client.
+		+------------------+
+                |   Web Browser     |
+                +------------------+
+                        |
+                        | request
+                        v
+                +------------------+
+                |  Servlet Program1 |
+                +------------------+
+                        |
+                        | include(-,-)
+                        v
+                +------------------+
+                |  Servlet Program2 |
+                +------------------+
+                        |
+                        | response (added to Servlet Program1's response)
+                        v
+                +------------------+
+                |  Servlet Program1 |
+                |  (Final response) |
+                +------------------+
+                        |
+                        | final response
+                        v
+                +------------------+
+                |      Web Browser  |
+                |  (Final Response) |
+                +------------------+
+
+
+11. sendRedirect() method 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+12. Servlet Config and Servlet Context
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+13. Servlet using Annotation 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+14. init param using annotation
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+15. Session Management using Cookies in servlet 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+14. Session Management using Hidden form field 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+15. Session Management using URL rewriting 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+16. Session Management using HttpSession 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+17. Filter basics 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+18. Filter using annotation
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+19. User validation using MySQL JDBC and Tomcat 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+20. Listener
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+21. Employee registration using MySQL JDBC and Tomcat
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+22. Miscellaneous topic 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
