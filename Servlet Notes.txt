@@ -12,7 +12,8 @@
    ➤ Banking Apps etc.
    
 2. Servlet/JSP Flow:
------------------------------------------------------------------------------------------------------------------------------------------------------------   Client (web browser)  -->  Request  -->  Server (Tomcat)  -->  Request  -->  DB
+-----------------------------------------------------------------------------------------------------------------------------------------------------------   
+Client (web browser)  -->  Request  -->  Server (Tomcat)  -->  Request  -->  DB
 Client (web browser)  <--  HTML page  <--  Server (Tomcat)  <--  Response  <--  DB
 
 -> The client sends an HTTP request to the web server.
