@@ -32,7 +32,18 @@ public class JavaMinMaxPractice {
 		System.out.println("======================================================================================================================================================");
 		
 		//or but in this approach it is possible that the optional can be empty so better and safe way is the above one only.
-		Employee employeeData = employees.stream().max(Comparator.comparing(Employee::getSalary)).get();
-		System.out.println(employeeData);
+		Employee employeeMaxSalData = employees.stream().max(Comparator.comparing(Employee::getSalary)).get();
+		System.out.println(employeeMaxSalData);
+		
+		System.out.println("======================================================================================================================================================");
+		
+		//Use of min.
+		employees.stream().min(Comparator.comparing(Employee::getSalary)).ifPresentOrElse(employee -> System.out.println("Lowest paid employee: " + employee),() -> {System.out.println("Not present");});
+		
+		System.out.println("======================================================================================================================================================");
+		
+		//or but in this approach it is possible that the optional can be empty so better and safe way is the above one only.
+		Employee employeeMinSalData = employees.stream().min(Comparator.comparing(Employee::getSalary)).get();
+		System.out.println(employeeMinSalData);
 	}
 }
