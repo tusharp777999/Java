@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /*
-*Given a sentence, find the word which has highest length.
+* Given a sentence, find the word which has highest length.
 * I/P: "I am learning Streams API in Java."
 * O/P: learning
-**/
+*/
 public class Program01 {
     public static void main(String[] args) {
         String str = "I am learning Streams API in Java.";

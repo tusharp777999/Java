@@ -7,6 +7,7 @@ package com.tushar.stream.questions;
 */
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class Program53 {
     public static void main(String[] args) {
@@ -16,6 +17,13 @@ public class Program53 {
                 .filter(data -> String.valueOf(data).startsWith("1"))
                 .boxed()
                 .sorted((a, b) -> -a.compareTo(b))
+                .forEach(System.out::println);
+
+        Arrays.stream(array)
+                .distinct()
+                .filter(data -> String.valueOf(data).startsWith("1"))
+                .boxed()
+                .sorted(Comparator.reverseOrder())
                 .forEach(System.out::println);
     }
 }

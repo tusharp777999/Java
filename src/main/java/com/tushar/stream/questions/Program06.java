@@ -3,6 +3,7 @@ package com.tushar.stream.questions;
 /*
 *Given a sentence, find the words with a specified number of vowels.
 * I/P: String str = "I am learning Streams API in Java.";
+* int vowels = 2;
 * O/P: Streams, API, Java
 */
 

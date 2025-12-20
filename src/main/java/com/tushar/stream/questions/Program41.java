@@ -8,11 +8,14 @@ package com.tushar.stream.questions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Program41 {
     public static void main(String[] args) {
         List<String> alphabets = Arrays.asList("a", "b", "c", "d");
         String result = alphabets.stream().map(data -> data.toUpperCase()).reduce("", (a, b) -> a.concat(b));
         System.out.println(result);
+        String result1 = alphabets.stream().map(data -> data.toUpperCase()).collect(Collectors.joining());
+        System.out.println(result1);
     }
 }

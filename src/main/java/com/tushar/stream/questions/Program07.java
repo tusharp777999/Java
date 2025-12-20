@@ -7,6 +7,7 @@ package com.tushar.stream.questions;
 */
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public class Program07 {
         List<Integer> integerList = Arrays.stream(inputArray).boxed().toList();
         List<List<Integer>> listedData = integerList.stream().collect(Collectors.groupingBy(data -> data % 2 == 0, Collectors.toList())).entrySet().stream().map(newData -> newData.getValue()).toList();
         //List<List<Integer>> listedData = integerList.stream().collect(Collectors.partitioningBy(data -> data % 2 == 0, Collectors.toList())).entrySet().stream().map(newData -> newData.getValue()).toList();
+        //Collection<List<Integer>> ans = integerList.stream().collect(Collectors.groupingBy(data -> data % 2 == 0, Collectors.toList())).values();
         System.out.println(listedData);
     }
 }

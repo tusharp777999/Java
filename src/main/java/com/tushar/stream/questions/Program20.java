@@ -16,5 +16,9 @@ public class Program20 {
         boolean result = Arrays.stream(array).boxed().toList().stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).values()
                 .stream().noneMatch(data -> data > 1);
         System.out.println(result);
+
+        boolean result1 = Arrays.stream(array).boxed().toList().stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).values()
+                .stream().allMatch(data -> data <= 1);
+        System.out.println(result1);
     }
 }

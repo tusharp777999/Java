@@ -9,10 +9,12 @@ import java.util.stream.IntStream;
 
 public class Program52 {
     public static void main(String[] args) {
-        String str = "eduction";
+        String str = "education";
         String result = IntStream.range(0, str.length())
                 .filter(index -> (str.length() % 2 == 0) ? (index == (str.length()/2) -1 ) || index == (str.length()/2) : index == (str.length()/2))
                 .mapToObj(index -> String.valueOf(str.charAt(index))).collect(Collectors.joining());
         System.out.println(result);
+        System.out.println((str.length()/2) - 1);
+        System.out.println(str.length()/2);
     }
 }
