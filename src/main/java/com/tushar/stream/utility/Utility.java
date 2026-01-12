@@ -86,6 +86,8 @@ public class Utility {
         list.add(new Employee2("Maddy", 15000.0));
         list.add(new Employee2("Linda", 21000));
         list.add(new Employee2("Macho", 40000));
+        list.add(new Employee2("Sam", 8000.0));
+        list.add(new Employee2("Dolla", 5000.0));
         return list;
     }
 
