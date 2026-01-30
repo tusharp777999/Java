@@ -16,5 +16,8 @@ public class Program21 {
         String[] strArray = {"ewe", "jji", "jhj", "kwk", "aha"};
         Map<String, List<String>> result = Arrays.stream(strArray).collect(Collectors.groupingBy(data -> data.substring(1, 2)));
         System.out.println(result);
+
+        Map<Character, List<String>> result1 = Arrays.stream(strArray).collect(Collectors.groupingBy(data -> data.charAt(1)));
+        System.out.println(result1);
     }
 }

@@ -18,5 +18,10 @@ public class Program12 {
                 .entrySet().stream().filter(data -> data.getValue() > 1).map(convertedData -> convertedData.getKey())
                 .findFirst().get();
         System.out.println(result);
+
+        char result1 = str.chars().mapToObj(data -> (char)data).collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()))
+                .entrySet().stream().filter(data -> data.getValue() > 1).map(convertedData -> convertedData.getKey())
+                .findFirst().get();
+        System.out.println(result1);
     }
 }

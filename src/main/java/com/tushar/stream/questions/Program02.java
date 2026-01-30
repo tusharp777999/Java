@@ -16,6 +16,9 @@ public class Program02 {
         //Arrays.stream(str.split("")).distinct().forEach(System.out::print);
         //str.chars().distinct().mapToObj(data -> (char) data).forEach(System.out::print);
         //Arrays.stream(str.split("")).collect(Collectors.toSet()).forEach(System.out::print); changes sequence
+        //String data1 = Arrays.asList(str.split("")).stream()
+        //        .collect(Collectors.toCollection(LinkedHashSet::new)).stream().collect(Collectors.joining());
+        //System.out.println(data1);
         Arrays.stream(str.split("")).collect(Collectors.toCollection(LinkedHashSet::new)).forEach(System.out::print);
     }
 }

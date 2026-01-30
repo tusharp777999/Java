@@ -14,5 +14,8 @@ public class Program14 {
         String[] stringArray = {"abc", "123", "456", "xyz"};
         List<Integer> result = Arrays.stream(stringArray).filter(data -> data.matches("[0-9]+")).map(Integer::valueOf).toList();
         System.out.println(result);
+
+        //List<Integer> result1 = Arrays.stream(stringArray).filter(data -> data.matches("[0-9]+")).map(data -> Integer.valueOf(data)).toList();
+        //System.out.println(result1);
     }
 }
